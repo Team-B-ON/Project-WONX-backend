@@ -38,9 +38,6 @@ src
 - **H2 Database** - 개발/테스트용 인메모리 DB
 - **MySQL** - 운영용 RDBMS
 - **JWT (JJWT)** - 토큰 기반 인증 (Access/Refresh Token)
-- **Lombok** - 보일러플레이트 코드 제거
-- **Jakarta Validation** - DTO 유효성 검사
-- **Maven** - 프로젝트 빌드 및 의존성 관리
 
 ---
 
