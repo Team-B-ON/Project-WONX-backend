@@ -1,4 +1,3 @@
-```markdown
 # 🎬 Wonx Backend
 
 넷플릭스 스타일의 동영상 스트리밍 백엔드 서비스입니다.  
