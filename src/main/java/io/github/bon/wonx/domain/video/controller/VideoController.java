@@ -1,5 +1,6 @@
 package io.github.bon.wonx.domain.video.controller;
 
+import io.github.bon.wonx.domain.video.dto.TmdbUpcomingResponse;
 import io.github.bon.wonx.domain.video.entity.Video;
 import io.github.bon.wonx.domain.video.service.VideoService;
 
@@ -19,7 +20,6 @@ public class VideoController {
     this.videoService = videoService;
   }
 
-  // 배너용: 평점 가장 높은 영상 1개
   @GetMapping("/banner")
   public Video getMainBanner() {
     return videoService.getMainBannerVideo();
@@ -27,9 +27,10 @@ public class VideoController {
   }
 
   // 최신작용: 오늘 ~ 7일 내 공개 예정 콘텐츠
+  // TMDB 상영 예정작 연동 업데이트
   @GetMapping("/latest")
-  public List<Video> getLatest() {
-    return videoService.getUpcomingVideosWithinAWeek();
+  public TmdbUpcomingResponse getLatest() {
+    return videoService.getUpcomingMoviesFromTmdb();
   }
 
   @GetMapping("/wonx-popular")
@@ -37,4 +38,5 @@ public class VideoController {
       @RequestParam(defaultValue = "5") int count) {
     return videoService.getPopularVideos(count);
   }
+
 }
