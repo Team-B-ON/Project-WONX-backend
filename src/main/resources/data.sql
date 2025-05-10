@@ -1,9 +1,11 @@
-INSERT INTO video (
-  id, title, description, rating, duration_minutes,
-  release_date, age_rating, background_video_url,
-  thumbnail_url, view_count
-) VALUES
-  (RANDOM_UUID(), '해리 포터', '마법 세계의 소년 이야기', 4.8, 120, CURRENT_DATE, '12+', 'https://example.com/bg1.mp4', 'https://example.com/thumb1.jpg', 500),
-  (RANDOM_UUID(), '반지의 제왕', '모험과 우정의 판타지 여정', 4.9, 180, CURRENT_DATE, '15+', 'https://example.com/bg2.mp4', 'https://example.com/thumb2.jpg', 1200),
-  (RANDOM_UUID(), '인사이드 아웃', '감정들의 성장 이야기', 4.5, 100, CURRENT_DATE, 'All', 'https://example.com/bg3.mp4', 'https://example.com/thumb3.jpg', 800),
-  (RANDOM_UUID(), '겨울왕국', '자신을 찾아가는 엘사의 이야기', 4.7, 110, CURRENT_DATE, 'All', 'https://example.com/bg4.mp4', 'https://example.com/thumb4.jpg', 950);
+INSERT INTO review (video_id, user_id, content, view_count, like_count, created_at) VALUES
+(101, 1, '진짜 몰입감 쩌는 영화였어요!', 153, 0, CURRENT_TIMESTAMP),
+(102, 2, '마지막 장면이 충격 그 자체...', 275, 0, CURRENT_TIMESTAMP),
+(103, 3, 'OST가 너무 좋아서 계속 듣는 중!', 92, 0, CURRENT_TIMESTAMP),
+(104, 4, '스토리는 약했지만 비주얼은 굿!', 180, 0, CURRENT_TIMESTAMP),
+(105, 5, '평점보다 훨씬 재밌었음', 210, 0, CURRENT_TIMESTAMP),
+(106, 6, '다시 봐도 여운이 남는 작품이에요.', 143, 0, CURRENT_TIMESTAMP),
+(107, 7, '기대보다 별로였음. 과한 마케팅이 문제?', 80, 0, CURRENT_TIMESTAMP),
+(108, 8, '이건 진짜 인생 영화로 남을 듯', 312, 0, CURRENT_TIMESTAMP),
+(109, 9, '액션 장면은 인정. 스토리는 글쎄요', 189, 0, CURRENT_TIMESTAMP),
+(110, 10, '잔잔한 감동이 있는 작품. 추천!', 205, 0, CURRENT_TIMESTAMP);
