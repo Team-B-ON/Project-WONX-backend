@@ -1,6 +1,8 @@
-package io.github.bon.wonx.domain.video;
+package io.github.bon.wonx.domain.video.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
+import io.github.bon.wonx.domain.video.entity.Video;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,4 +15,5 @@ public interface VideoRepository extends JpaRepository<Video, UUID> {
   // 오늘 날짜 기준 1주일 이내에 공개될 콘텐츠만 보여주기
   List<Video> findByReleaseDateBetweenOrderByReleaseDateAsc(LocalDate start, LocalDate end);
 
+  List<Video> findAllByOrderByViewCountDesc(Pageable pageable);
 }
