@@ -4,6 +4,7 @@ import io.github.bon.wonx.domain.video.Video;
 import io.github.bon.wonx.service.MainService;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,25 +20,28 @@ public class MainController {
     this.mainService = mainService;
   }
 
-  // 배너용: 평점 가장 높은 영상 1개
   @GetMapping("/banner")
   public Video getMainBanner() {
     return mainService.getMainBannerVideo();
 
   }
 
-  // 최신작용: 오늘 ~ 7일 내 공개 예정 콘텐츠
   @GetMapping("/latest")
   public List<Video> getLatest() {
     return mainService.getUpcomingVideosWithinAWeek();
   }
 
-  // 인기콘텐츠용: 조회수 기준 인기 콘텐츠를 조회
   @GetMapping("/wonx-popular")
   public List<Video> getPopular(
-      // 기본적으로 인기 콘텐츠 5개를 가져오고 요청 파라미터로 갯수 조절?
       @RequestParam(defaultValue = "5") int count) {
     return mainService.getPopularVideos(count);
+  }
+
+  // 사용자 맞춤 추천 api
+  @GetMapping("/recommend")
+  public List<Video> getRecommend(@RequestParam UUID userId) {
+    // 클라이언트가 userId를 쿼리 파라미터로 전달해야 함
+    return mainService.getRecommendedVideo(userId);
   }
 
 }
