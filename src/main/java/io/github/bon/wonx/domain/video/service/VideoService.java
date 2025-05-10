@@ -1,5 +1,7 @@
 package io.github.bon.wonx.domain.video.service;
 
+import io.github.bon.wonx.domain.video.dto.BoxOfficeResponse;
+import io.github.bon.wonx.domain.video.dto.TmdbTrendingResponse;
 import io.github.bon.wonx.domain.video.dto.TmdbUpcomingResponse;
 import io.github.bon.wonx.domain.video.entity.Video;
 import io.github.bon.wonx.domain.video.repository.VideoRepository;
@@ -52,4 +54,22 @@ public class VideoService {
 
     return restTemplate.getForObject(url, TmdbUpcomingResponse.class);
   }
+
+  public List<BoxOfficeResponse> getBoxOfficeFromTmdb() {
+    String url = "https://api.themoviedb.org/3/trending/all/day"
+        + "?language=ko-KR&region=KR&api_key=" + apiKey;
+
+    TmdbTrendingResponse response = restTemplate.getForObject(url, TmdbTrendingResponse.class);
+
+    return response.getResults().stream()
+        .map(item -> BoxOfficeResponse.builder()
+            .title(item.getTitle() != null ? item.getTitle() : item.getName())
+            .overview(item.getOverview())
+            .posterPath(item.getPosterPath())
+            .releaseDate(item.getReleaseDate() != null ? item.getReleaseDate() : item.getFirstAirDate())
+            .mediaType(item.getMediaType())
+            .build())
+        .toList();
+  }
+
 }

@@ -1,5 +1,6 @@
 package io.github.bon.wonx.domain.video.controller;
 
+import io.github.bon.wonx.domain.video.dto.BoxOfficeResponse;
 import io.github.bon.wonx.domain.video.dto.TmdbUpcomingResponse;
 import io.github.bon.wonx.domain.video.entity.Video;
 import io.github.bon.wonx.domain.video.service.VideoService;
@@ -37,6 +38,11 @@ public class VideoController {
   public List<Video> getPopular(
       @RequestParam(defaultValue = "5") int count) {
     return videoService.getPopularVideos(count);
+  }
+
+  @GetMapping("/box-office")
+  public List<BoxOfficeResponse> getBoxOffice() {
+    return videoService.getBoxOfficeFromTmdb();
   }
 
 }
