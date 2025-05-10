@@ -22,5 +22,5 @@ public class Video {
   private String ageRating; // 시청 등급
   private String backgroundVideoUrl; // 배너 등에 쓰일 영상 배경 URL
   private String thumbnailUrl; // 썸네일 이미지 URL
-
+  private Integer viewCount; // 콘텐츠 조회수
 }
