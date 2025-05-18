@@ -1,3 +1,4 @@
+# 프로젝트 설정 파일
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -31,3 +32,25 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 환경 변수 ###
+.env
+*.env
+**/.env
+**/*.env
+
+### 로그 파일 ###
+*.log
+**/*.log
+logs/
+**/logs/
+**/log/
+
+### 운영 파일 ###
+*.pid
+*.seed
+
+### IDE 설정 ###
+/*.swp
+/.DS_Store
+Thumbs.db
