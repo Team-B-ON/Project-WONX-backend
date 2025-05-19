@@ -1,10 +1,13 @@
 package io.github.bon.wonx.domain.movies.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Pageable;
+import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.movies.entity.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
@@ -34,6 +37,34 @@ public class MovieService {
     return related.stream()
         .filter(m -> !m.getId().equals(id))
         .map(MovieDto::from)
+        .toList();
+  }
+
+  // 메인 배너
+  public MovieDto getBannerMovie() {
+    return movieRepository.findTop1ByOrderByBoxOfficeRankAsc()
+        .map(MovieDto::from)
+        .orElseThrow(() -> new RuntimeException("해당 영화를 찾을 수 없습니다."));
+  }
+
+  // 개봉 예정작
+  public List<MovieDto> getUpcomingMovies() {
+    LocalDate today = LocalDate.now();
+    LocalDate weekLater = today.plusDays(7);
+
+    return movieRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(today, weekLater)
+        .stream()
+        .map(MovieDto::from)
+        .toList();
+  }
+
+  // 조회수 기반 인기 콘텐츠
+  public List<HotMovieDto> getHotMovies(int count) {
+    Pageable pageable = PageRequest.of(0, count);
+
+    return movieRepository.findAllByOrderByViewCountDesc(pageable)
+        .stream()
+        .map(HotMovieDto::from)
         .toList();
   }
 }

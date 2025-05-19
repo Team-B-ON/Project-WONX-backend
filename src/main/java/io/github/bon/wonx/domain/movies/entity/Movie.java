@@ -14,10 +14,12 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Builder
 @Table(name = "videos")
 @Getter
 @NoArgsConstructor
@@ -60,4 +62,12 @@ public class Movie {
   // @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval =
   // true, fetch = FetchType.LAZY)
   // private List<MoviePerson> moviePersons = new ArrayList<>();
+
+  // 박스오피스 순위 정렬
+  @Column(name = "box_office_rank")
+  private Integer boxOfficeRank;
+
+  // 인기 콘텐츠 정렬
+  @Column(name = "view_count")
+  private Integer viewCount;
 }
