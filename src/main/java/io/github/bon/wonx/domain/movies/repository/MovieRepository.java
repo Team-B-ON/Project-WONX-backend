@@ -25,4 +25,7 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
 
   // TMDB 저장 중 중복 체크용
   boolean existsByTitleAndReleaseDate(String title, LocalDate releaseDate);
+
+  // 박스오피스 순위 기준으로 상위 10개 영화 조회
+  List<Movie> findTop10ByBoxOfficeRankIsNotNullOrderByBoxOfficeRankAsc();
 }

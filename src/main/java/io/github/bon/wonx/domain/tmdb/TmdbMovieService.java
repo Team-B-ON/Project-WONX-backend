@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import io.github.bon.wonx.domain.tmdb.dto.TmdbMovieDto;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 @Service

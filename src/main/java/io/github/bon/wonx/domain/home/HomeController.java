@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.home.dto.HotTalkDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
@@ -36,5 +38,10 @@ public class HomeController {
   @GetMapping("/hot-talks")
   public ResponseEntity<List<HotTalkDto>> getHotTalks() {
     return ResponseEntity.ok(homeService.getHotTalks());
+  }
+
+  @GetMapping("/box-office")
+  public ResponseEntity<List<BoxOfficeDto>> getBoxOfficeMovies() {
+    return ResponseEntity.ok(homeService.getBoxOfficeMovies());
   }
 }
