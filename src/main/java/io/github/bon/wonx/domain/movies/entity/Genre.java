@@ -29,4 +29,9 @@ public class Genre {
 
   @ManyToMany(mappedBy = "genres")
   private List<Movie> movies;
+
+  // 추천 기능 테스트용 단일 생성자 -> 추후 삭제 가능
+  public Genre(String name) {
+    this.name = name;
+  }
 }

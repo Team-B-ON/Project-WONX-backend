@@ -3,6 +3,8 @@ package io.github.bon.wonx.domain.home;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +13,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.home.dto.HotTalkDto;
+import io.github.bon.wonx.domain.home.dto.RecommendDto;
 import io.github.bon.wonx.domain.home.entity.HotTalk;
 import io.github.bon.wonx.domain.home.repository.HotTalkRepository;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
+import io.github.bon.wonx.domain.movies.entity.Genre;
+import io.github.bon.wonx.domain.movies.entity.Like;
 import io.github.bon.wonx.domain.movies.entity.Movie;
+import io.github.bon.wonx.domain.movies.repository.GenreRepository;
+import io.github.bon.wonx.domain.movies.repository.LikeRepository;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
+import io.github.bon.wonx.domain.user.User;
+import io.github.bon.wonx.domain.user.UserRepository;
 import jakarta.transaction.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +39,15 @@ public class HomeServiceTest {
 
         @Autowired
         private HotTalkRepository hotTalkRepository;
+
+        @Autowired
+        private LikeRepository likeRepository;
+
+        @Autowired
+        private GenreRepository genreRepository;
+
+        @Autowired
+        private UserRepository userRepository;
 
         @BeforeEach
         void setUp() {
@@ -93,6 +111,7 @@ public class HomeServiceTest {
                                 .boxOfficeRank(202)
                                 .viewCount(0)
                                 .build());
+
         }
 
         @Test
@@ -217,5 +236,49 @@ public class HomeServiceTest {
 
                 long count = homeService.getTotalReviewCount();
                 assertThat(count).isEqualTo(3);
+        }
+
+        @Test
+        @Transactional
+        void getRecommendedMovies는_선호장르기반_조회수_내림차순으로_추천한다() {
+
+                User user = userRepository.save(User.builder()
+                                .email("test@example.com")
+                                .nickname("tester")
+                                .build());
+                UUID userId = user.getId(); // 여기에 진짜 ID 들어감
+
+                // 장르, 영화 저장
+                Genre action = genreRepository.save(new Genre("액션"));
+                Genre drama = genreRepository.save(new Genre("드라마"));
+
+                Movie liked = movieRepository.save(Movie.builder()
+                                .title("좋아요 영화")
+                                .genres(List.of(action))
+                                .viewCount(100)
+                                .build());
+
+                Movie rec1 = movieRepository.save(Movie.builder()
+                                .title("추천 영화 1")
+                                .genres(List.of(action))
+                                .viewCount(300)
+                                .build());
+
+                Movie rec2 = movieRepository.save(Movie.builder()
+                                .title("추천 영화 2")
+                                .genres(List.of(drama, action))
+                                .viewCount(200)
+                                .build());
+
+                // 좋아요 저장
+                likeRepository.save(new Like(user, liked));
+
+                // 테스트 실행
+                List<RecommendDto> result = homeService.getRecommendedMovies(userId);
+
+                // 검증
+                assertThat(result).hasSize(2);
+                assertThat(result.get(0).getTitle()).isEqualTo("추천 영화 1"); // 조회수 높은 순
+                assertThat(result.get(1).getTitle()).isEqualTo("추천 영화 2");
         }
 }
