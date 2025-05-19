@@ -36,9 +36,21 @@ public class VideoService {
     }
   }
 
+  // 메인 배너
   public VideoDto getMainBannerVideo() {
+
     return videoRepository.findTop1ByOrderByBoxOfficeRankAsc()
         .map(VideoDto::from)
         .orElseThrow(() -> new RuntimeException("해당 영화를 찾을 수 없습니다."));
+  }
+
+  // 개봉 예정작
+  public List<VideoDto> getUpcomingMovies() {
+    LocalDate today = LocalDate.now();
+    LocalDate weekLater = today.plusDays(7);
+
+    return videoRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(today, weekLater).stream()
+        .map(VideoDto::from)
+        .toList();
   }
 }

@@ -54,4 +54,23 @@ public class VideoServiceTest {
     assertThat(result.getPosterUrl()).isEqualTo("https://example.com/poster1.jpg");
   }
 
+  @Test
+  void getUpcomingMoviesWithinAWeek는_오늘부터_7일이내_개봉작만_반환한다() {
+    // given
+    LocalDate today = LocalDate.now();
+    videoRepository.save(Video.builder().title("오늘 개봉").releaseDate(today).build());
+    videoRepository.save(Video.builder().title("3일 후 개봉").releaseDate(today.plusDays(3)).build());
+    videoRepository.save(Video.builder().title("7일 후 개봉").releaseDate(today.plusDays(7)).build());
+    videoRepository.save(Video.builder().title("8일 후 개봉").releaseDate(today.plusDays(8)).build());
+    videoRepository.save(Video.builder().title("어제 개봉").releaseDate(today.minusDays(1)).build());
+
+    // when
+    var results = videoService.getUpcomingMovies();
+
+    // then
+    assertThat(results).hasSize(3);
+    assertThat(results).extracting("title")
+        .containsExactlyInAnyOrder("오늘 개봉", "3일 후 개봉", "7일 후 개봉");
+  }
+
 }
