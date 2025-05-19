@@ -55,4 +55,9 @@ public class HomeService {
             movie.getBoxOfficeRank()))
         .toList();
   }
+
+  // 전체 누적 리뷰 수 반환
+  public long getTotalReviewCount() {
+    return talkRepository.count();
+  }
 }

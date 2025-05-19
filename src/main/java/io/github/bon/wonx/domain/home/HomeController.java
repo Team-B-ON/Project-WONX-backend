@@ -44,4 +44,9 @@ public class HomeController {
   public ResponseEntity<List<BoxOfficeDto>> getBoxOfficeMovies() {
     return ResponseEntity.ok(homeService.getBoxOfficeMovies());
   }
+
+  @GetMapping("/review-count")
+  public ResponseEntity<Long> getTotalReviewCount() {
+    return ResponseEntity.ok(homeService.getTotalReviewCount());
+  }
 }
