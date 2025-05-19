@@ -28,4 +28,11 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
 
   // 박스오피스 순위 기준으로 상위 10개 영화 조회
   List<Movie> findTop10ByBoxOfficeRankIsNotNullOrderByBoxOfficeRankAsc();
+
+  // 추천 장르 중 이미 좋아요한 영화 제외
+  List<Movie> findDistinctByGenresInAndIdNotIn(List<Genre> genres, List<UUID> excludeIds);
+
+  // 추천 콘텐츠 정렬시 조회수가 높은 영화순
+  List<Movie> findDistinctByGenresInAndIdNotInOrderByViewCountDesc(List<Genre> genres, List<UUID> excludeIds);
+
 }

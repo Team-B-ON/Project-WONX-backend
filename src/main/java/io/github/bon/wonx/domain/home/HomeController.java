@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.home.dto.HotTalkDto;
+import io.github.bon.wonx.domain.home.dto.RecommendDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
+import io.github.bon.wonx.domain.user.User;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -48,5 +50,10 @@ public class HomeController {
   @GetMapping("/review-count")
   public ResponseEntity<Long> getTotalReviewCount() {
     return ResponseEntity.ok(homeService.getTotalReviewCount());
+  }
+
+  @GetMapping("/recommend")
+  public ResponseEntity<List<RecommendDto>> getRecommendations(@AuthenticationPrincipal User user) {
+    return ResponseEntity.ok(homeService.getRecommendedMovies(user.getId()));
   }
 }
