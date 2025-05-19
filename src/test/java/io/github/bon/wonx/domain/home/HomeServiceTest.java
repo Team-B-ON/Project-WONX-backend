@@ -1,15 +1,21 @@
 package io.github.bon.wonx.domain.home;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
+import io.github.bon.wonx.domain.home.dto.HotTalkDto;
+import io.github.bon.wonx.domain.home.entity.HotTalk;
+import io.github.bon.wonx.domain.home.repository.HotTalkRepository;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
+import jakarta.transaction.Transactional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -20,8 +26,13 @@ public class HomeServiceTest {
   @Autowired
   private MovieRepository movieRepository;
 
+  @Autowired
+  private HotTalkRepository hotTalkRepository;
+
   @BeforeEach
   void setUp() {
+
+    hotTalkRepository.deleteAll();
     movieRepository.deleteAll();
 
     // 배너용 영화 (boxOfficeRank = 1)
@@ -107,5 +118,49 @@ public class HomeServiceTest {
     assertThat(result).hasSize(2);
     assertThat(result).extracting("title")
         .containsExactlyInAnyOrder("오늘 개봉", "7일 후 개봉");
+  }
+
+  @Transactional
+  @Test
+  void getHotTalks는_조회수_높고_최신순으로_3개_반환한다() {
+
+    // 테스트용 영화 하나 가져오기
+    Movie movie = movieRepository.findAll().get(0);
+
+    // 더미 HotTalk 데이터 저장
+    hotTalkRepository.save(HotTalk.builder()
+        .content("후기 A")
+        .viewCount(50)
+        .createdAt(LocalDateTime.now().minusDays(1))
+        .movie(movie)
+        .build());
+
+    hotTalkRepository.save(HotTalk.builder()
+        .content("후기 B")
+        .viewCount(200)
+        .createdAt(LocalDateTime.now())
+        .movie(movie)
+        .build());
+
+    hotTalkRepository.save(HotTalk.builder()
+        .content("후기 C")
+        .viewCount(150)
+        .createdAt(LocalDateTime.now().minusHours(1))
+        .movie(movie)
+        .build());
+
+    hotTalkRepository.save(HotTalk.builder()
+        .content("후기 D")
+        .viewCount(10)
+        .createdAt(LocalDateTime.now().minusDays(2))
+        .movie(movie)
+        .build());
+
+    List<HotTalkDto> result = homeService.getHotTalks();
+
+    assertThat(result).hasSize(3);
+    assertThat(result.get(0).getTalkContent()).isEqualTo("후기 B"); // 조회수 200
+    assertThat(result.get(1).getTalkContent()).isEqualTo("후기 C"); // 조회수 150
+    assertThat(result.get(2).getTalkContent()).isEqualTo("후기 A"); // 조회수 50
   }
 }
