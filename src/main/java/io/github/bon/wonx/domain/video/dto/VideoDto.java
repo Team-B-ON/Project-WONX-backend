@@ -12,6 +12,7 @@ public class VideoDto {
   private String description;
   private String posterUrl;
 
+  // 콘텐츠 기본 정보 반환용
   public static VideoDto from(Video video) {
     return new VideoDto(
         video.getTitle(),

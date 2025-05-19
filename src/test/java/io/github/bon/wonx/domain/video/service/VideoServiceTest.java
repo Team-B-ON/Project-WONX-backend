@@ -1,10 +1,12 @@
 package io.github.bon.wonx.domain.video.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import io.github.bon.wonx.domain.video.dto.HotVideoDto;
 import io.github.bon.wonx.domain.video.dto.VideoDto;
 import io.github.bon.wonx.domain.video.entity.Video;
 import io.github.bon.wonx.domain.video.repository.VideoRepository;
@@ -41,6 +43,27 @@ public class VideoServiceTest {
         .releaseDate(LocalDate.of(2024, 2, 1))
         .boxOfficeRank(1)
         .build());
+
+    videoRepository.save(Video.builder()
+        .title("조회수 10")
+        .posterUrl("https://example.com/10.jpg")
+        .viewCount(10)
+        .releaseDate(LocalDate.now())
+        .build());
+
+    videoRepository.save(Video.builder()
+        .title("조회수 300")
+        .posterUrl("https://example.com/300.jpg")
+        .viewCount(300)
+        .releaseDate(LocalDate.now())
+        .build());
+
+    videoRepository.save(Video.builder()
+        .title("조회수 150")
+        .posterUrl("https://example.com/150.jpg")
+        .viewCount(150)
+        .releaseDate(LocalDate.now())
+        .build());
   }
 
   @Test
@@ -71,6 +94,18 @@ public class VideoServiceTest {
     assertThat(results).hasSize(3);
     assertThat(results).extracting("title")
         .containsExactlyInAnyOrder("오늘 개봉", "3일 후 개봉", "7일 후 개봉");
+  }
+
+  @Test
+  void getHotVideos는_조회수_내림차순으로_정렬된_영상들을_반환한다() {
+    // when
+    List<HotVideoDto> results = videoService.getHotVideos(3);
+
+    // then
+    assertThat(results).hasSize(3);
+    assertThat(results.get(0).getTitle()).isEqualTo("조회수 300");
+    assertThat(results.get(1).getTitle()).isEqualTo("조회수 150");
+    assertThat(results.get(2).getTitle()).isEqualTo("조회수 10");
   }
 
 }

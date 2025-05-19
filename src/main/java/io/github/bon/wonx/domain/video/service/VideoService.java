@@ -2,12 +2,16 @@ package io.github.bon.wonx.domain.video.service;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import io.github.bon.wonx.domain.tmdb.dto.TmdbMovieDto;
+import io.github.bon.wonx.domain.video.dto.HotVideoDto;
 import io.github.bon.wonx.domain.video.dto.VideoDto;
 import io.github.bon.wonx.domain.video.entity.Video;
 import io.github.bon.wonx.domain.video.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 // tmdb에서 받은 영화 데이터를 db에 저장하는 기능
 @Service
@@ -51,6 +55,19 @@ public class VideoService {
 
     return videoRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(today, weekLater).stream()
         .map(VideoDto::from)
+        .toList();
+  }
+
+  // 조회수 기반 인기작
+  public List<HotVideoDto> getHotVideos(int count) {
+    Pageable pageable = PageRequest.of(0, count);
+
+    return videoRepository.findAllByOrderByViewCountDesc(pageable)
+        .stream()
+        .map(video -> new HotVideoDto(
+            video.getTitle(),
+            video.getPosterUrl(),
+            video.getViewCount()))
         .toList();
   }
 }

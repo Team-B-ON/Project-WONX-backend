@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.github.bon.wonx.domain.video.dto.HotVideoDto;
 import io.github.bon.wonx.domain.video.dto.VideoDto;
 import io.github.bon.wonx.domain.video.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +29,12 @@ public class VideoController {
   @GetMapping("/upcoming")
   public ResponseEntity<List<VideoDto>> getUpcomingMovies() {
     return ResponseEntity.ok(videoService.getUpcomingMovies());
+  }
+
+  // 조회수 기반 인기작
+  @GetMapping("/hot")
+  public ResponseEntity<List<HotVideoDto>> getHotVideos(
+      @RequestParam(defaultValue = "5") int count) {
+    return ResponseEntity.ok(videoService.getHotVideos(count));
   }
 }

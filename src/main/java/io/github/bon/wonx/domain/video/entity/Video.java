@@ -35,7 +35,7 @@ public class Video {
 
   private LocalDate releaseDate;
 
-  private Integer boxOfficeRank; // TMDB 인기 순위 (1위, 2위…)
+  private Integer boxOfficeRank;
 
-  // 나중에 reviewCount, likeCount 등 컬럼 추가 가능
+  private int viewCount;
 }
