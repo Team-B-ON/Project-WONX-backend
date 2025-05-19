@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
-import io.github.bon.wonx.domain.movies.entity.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;

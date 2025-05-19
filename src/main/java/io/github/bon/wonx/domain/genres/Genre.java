@@ -1,8 +1,9 @@
-package io.github.bon.wonx.domain.movies.entity;
+package io.github.bon.wonx.domain.genres;
 
 import java.util.List;
 import java.util.UUID;
 
+import io.github.bon.wonx.domain.movies.entity.Movie;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,4 +30,8 @@ public class Genre {
     
     @ManyToMany(mappedBy = "genres")
     private List<Movie> movies;
+
+    public List<Movie> getMovies() {
+        return this.movies;
+    }
 }

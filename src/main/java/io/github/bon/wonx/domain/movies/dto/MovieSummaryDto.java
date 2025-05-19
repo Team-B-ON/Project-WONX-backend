@@ -38,4 +38,19 @@ public class MovieSummaryDto {
                     .toList()
         );
     }
+
+    public static MovieSummaryDto from(Movie movie) {
+        return new MovieSummaryDto(
+            movie.getId(),
+            movie.getTitle(),
+            movie.getPosterUrl(),
+            false,
+            false,
+            movie.getAgeRating(),
+            movie.getDurationMinutes(),
+            movie.getGenres().stream()
+                    .map(genre -> genre.getName())
+                    .toList()
+        );
+    }
 }
