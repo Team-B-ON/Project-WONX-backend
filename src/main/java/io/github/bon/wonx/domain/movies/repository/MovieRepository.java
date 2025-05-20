@@ -35,4 +35,6 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
   // 추천 콘텐츠 정렬시 조회수가 높은 영화순
   List<Movie> findDistinctByGenresInAndIdNotInOrderByViewCountDesc(List<Genre> genres, List<UUID> excludeIds);
 
+  // 검색시 이름에 키워드 포함
+  List<Movie> findByTitleContainingIgnoreCase(String keyword);
 }

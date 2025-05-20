@@ -1,5 +1,6 @@
 package io.github.bon.wonx.domain.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,5 +17,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByNickname(String nickname);
 
     // 닉네임이 특정 문자열을 포함하는 사용자 찾기 (검색용)
-    Optional<User> findByNicknameContainingIgnoreCase(String nickname);
+    List<User> findByNicknameContainingIgnoreCase(String nickname);
+
 }
