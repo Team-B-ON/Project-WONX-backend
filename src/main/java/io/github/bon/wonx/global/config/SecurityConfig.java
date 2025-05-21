@@ -18,7 +18,7 @@ public class SecurityConfig {
                 "/api/search/**", // 검색 기능
                 "/api/movies/**", // 영화 관련
                 "/api/reviews/**", // 리뷰 조회
-                "/api/public/**" // 나중에 쓸 공개 prefix
+                "/api/admin/**" // 나중에 쓸 공개 prefix
             ).permitAll() // ↑ 이 경로들만 로그인 없이 허용
             .anyRequest().authenticated() // 나머지는 인증 필요
         )
