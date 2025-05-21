@@ -11,3 +11,6 @@ mysql -u wonxuser -p
 USE wonx;
 
 exit
+
+# .jar 파일 만드는 방법
+# .env에 있는 모든 파일을 하드코딩 후 mvn clean package
