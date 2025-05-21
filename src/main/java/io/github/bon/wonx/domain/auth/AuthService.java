@@ -32,7 +32,16 @@ public class AuthService {
 
         // 이메일로 유저 조회 또는 생성
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(User.builder().email(email).build()));
+            .orElseGet(() -> {
+                String baseNickname = email.split("@")[0];
+                String suffix = UUID.randomUUID().toString().substring(0, 6);
+                String nickname = baseNickname + "_" + suffix;
+
+                return userRepository.save(User.builder()
+                    .email(email)
+                    .nickname(nickname)
+                    .build());
+            });
 
         // access token을 magic link용 임시 토큰으로 사용
         String magicLinkToken = jwtProvider.createAccessToken(user.getId());
@@ -71,5 +80,30 @@ public class AuthService {
 
     public String extractUserIdFromToken(String token) {
         return jwtProvider.parseUserId(token);
+    }
+
+    @Transactional
+    public TokenResponseDto refresh(String refreshToken) {
+        String userIdStr = jwtProvider.parseUserId(refreshToken);
+        User user = userRepository.findById(UUID.fromString(userIdStr))
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        RefreshToken stored = refreshTokenRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("Refresh token not found"));
+
+        if (!stored.getToken().equals(refreshToken)) {
+            throw new IllegalArgumentException("Refresh token does not match");
+        }
+
+        if (stored.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Refresh token expired");
+        }
+
+        String newAccessToken = jwtProvider.createAccessToken(user.getId());
+        String newRefreshToken = jwtProvider.createRefreshToken(user.getId());
+
+        stored.updateToken(newRefreshToken, LocalDateTime.now().plusDays(7));
+
+        return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
 }

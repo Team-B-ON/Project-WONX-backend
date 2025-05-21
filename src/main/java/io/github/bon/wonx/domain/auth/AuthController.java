@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.auth.mail.MailRequestDto;
+import io.github.bon.wonx.domain.auth.token.RefreshRequestDto;
 import io.github.bon.wonx.domain.auth.token.TokenResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -36,5 +37,12 @@ public class AuthController {
         UUID userId = UUID.fromString(authService.extractUserIdFromToken(token));
         TokenResponseDto tokens = authService.authenticate(userId);
         return ResponseEntity.ok(tokens);
+    }
+
+    // 3. refresh 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) {
+        TokenResponseDto newTokens = authService.refresh(requestDto.getRefreshToken());
+        return ResponseEntity.ok(newTokens);
     }
 }
