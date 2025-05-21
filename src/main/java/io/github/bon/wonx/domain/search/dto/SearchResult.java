@@ -14,4 +14,6 @@ public class SearchResult {
   private List<MovieSearchDto> movies;
   private List<UserSearchDto> users;
   // private List<ReviewSearchDto> reviews;
+
+  private List<SuggestionDto> suggestions;
 }
