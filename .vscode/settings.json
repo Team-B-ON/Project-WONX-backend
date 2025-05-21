@@ -1,0 +1,14 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.import.gradle.enabled": false,
+    "java.import.maven.enabled": true,
+    "java.referencesCodeLens.enabled": true,
+    "java.configuration.runtimes": [
+      {
+        "name": "JavaSE-21",
+        "path": "/opt/homebrew/Cellar/openjdk@21/21.0.7/libexec/openjdk.jdk/Contents/Home",
+        "default": true
+      }
+    ]
+  }
+  
