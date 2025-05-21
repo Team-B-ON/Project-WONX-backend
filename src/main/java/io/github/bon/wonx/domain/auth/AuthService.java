@@ -47,7 +47,7 @@ public class AuthService {
         String magicLinkToken = jwtProvider.createAccessToken(user.getId());
 
         // magic link 생성
-        String magicLink = "http://wonx.ap-northeast-2.elasticbeanstalk.com/api/home?token=" + magicLinkToken;
+        String magicLink = "http://wonx.ap-northeast-2.elasticbeanstalk.com/api/auth/verify?token=" + magicLinkToken;
 
         // 이메일 발송
         mailService.sendMagicLink(email, magicLink);
