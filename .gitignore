@@ -35,6 +35,7 @@ build/
 *.env
 **/.env
 **/*.env
+application_template.md
 
 ### 로그 파일 ###
 *.log

@@ -46,8 +46,8 @@ public class AuthService {
         // access token을 magic link용 임시 토큰으로 사용
         String magicLinkToken = jwtProvider.createAccessToken(user.getId());
 
-        // magic link 생성 (프론트엔드 주소는 실제에 맞게 수정하세요)
-        String magicLink = "https://your-frontend.com/auth/verify?token=" + magicLinkToken;
+        // magic link 생성
+        String magicLink = "http://wonx.ap-northeast-2.elasticbeanstalk.com/api/home?token=" + magicLinkToken;
 
         // 이메일 발송
         mailService.sendMagicLink(email, magicLink);
