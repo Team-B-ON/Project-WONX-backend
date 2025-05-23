@@ -47,5 +47,8 @@ public class User {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.planType == null) {
+        this.planType = PlanType.FREE;
     }
+}
 }
