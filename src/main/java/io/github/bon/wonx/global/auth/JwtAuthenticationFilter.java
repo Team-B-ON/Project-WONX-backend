@@ -1,12 +1,15 @@
 package io.github.bon.wonx.global.auth;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.github.bon.wonx.domain.auth.token.JwtProvider;
+import io.github.bon.wonx.domain.user.User;
+import io.github.bon.wonx.domain.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -31,8 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
-                String userId = jwtProvider.parseUserId(token);
-                request.setAttribute("userId", userId); // 이후 컨트롤러에서 꺼내 사용 가능
+                String userIdStr = jwtProvider.parseUserId(token);
+                UUID userId = UUID.fromString(userIdStr);
+
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+                request.setAttribute("userId", user.getId());
+                request.setAttribute("userPlan", user.getPlanType());
+
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid or expired token");

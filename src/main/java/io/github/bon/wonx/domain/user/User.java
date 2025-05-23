@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
@@ -31,9 +33,13 @@ public class User {
 
     private String nickname;
     private String profileImageUrl;
-    
+
     @Column(columnDefinition = "TEXT")
     private String bio;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PlanType planType;
 
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
