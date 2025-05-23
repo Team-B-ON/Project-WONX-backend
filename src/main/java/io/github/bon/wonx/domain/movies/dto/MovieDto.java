@@ -16,39 +16,35 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class MovieDto {
+    private UUID id;
+    private String title;
+    private String description;
+    private Float rating;
+    private Integer durationMinutes;
+    private LocalDate releaseDate;
+    private String ageRating;
+    private boolean isBookmarked;
+    private boolean isLiked;
 
-  private UUID id;
-  private String title;
-  private String description;
-  private Float rating;
-  private Integer durationMinutes;
-  private LocalDate releaseDate;
-  private String ageRating;
-  private boolean isBookmarked;
-  private boolean isLiked;
-  private String posterUrl; // 추가
-  private Integer viewCount; // 추가
+    public void setIsBookmarked(boolean isBookmarked) {
+        this.isBookmarked = isBookmarked;
+    }
 
-  public void setIsBookmarked(boolean isBookmarked) {
-    this.isBookmarked = isBookmarked;
-  }
+    public void setIsLiked(boolean isLiked) {
+        this.isLiked = isLiked;
+    }
 
-  public void setIsLiked(boolean isLiked) {
-    this.isLiked = isLiked;
-  }
-
-  public static MovieDto from(Movie movie) {
-    return new MovieDto(
-        movie.getId(),
-        movie.getTitle(),
-        movie.getDescription(),
-        movie.getRating(),
-        movie.getDurationMinutes(),
-        movie.getReleaseDate(),
-        movie.getAgeRating(),
-        false,
-        false, movie.getPosterUrl(), // 추가
-        movie.getViewCount()); // 추가
-
-  }
+    public static MovieDto from(Movie movie) {
+        return new MovieDto(
+            movie.getId(),
+            movie.getTitle(),
+            movie.getDescription(),
+            movie.getRating(),
+            movie.getDurationMinutes(),
+            movie.getReleaseDate(),
+            movie.getAgeRating(),
+            false,
+            false
+        );
+    }
 }

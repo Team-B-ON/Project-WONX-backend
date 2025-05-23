@@ -17,28 +17,28 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BookmarkService {
-  private final BookmarkRepository bookmarkRepository;
-  private final UserRepository userRepository;
-  private final MovieRepository movieRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
-  // 북마크 추가
-  @Transactional
-  public BookmarkDto create(UUID userId, UUID movieId) {
-    User user = userRepository.findById(userId).orElse(null);
-    Movie movie = movieRepository.findById(movieId).orElse(null);
+    // 북마크 추가
+    @Transactional
+    public BookmarkDto create(UUID userId, UUID movieId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        
+        Bookmark bookmark = new Bookmark(user, movie);
+        Bookmark created = bookmarkRepository.save(bookmark);
+        
+        return BookmarkDto.from(created);
+    }
+    
+    // 북마크 삭제
+    @Transactional
+    public BookmarkDto delete(UUID userId, UUID movieId) {
+        Bookmark bookmark = bookmarkRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
+        bookmarkRepository.delete(bookmark);
 
-    Bookmark bookmark = new Bookmark(user, movie);
-    Bookmark created = bookmarkRepository.save(bookmark);
-
-    return BookmarkDto.from(created);
-  }
-
-  // 북마크 삭제
-  @Transactional
-  public BookmarkDto delete(UUID userId, UUID movieId) {
-    Bookmark bookmark = bookmarkRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
-    bookmarkRepository.delete(bookmark);
-
-    return BookmarkDto.notBookmarked(userId, movieId);
-  }
+        return BookmarkDto.notBookmarked(userId, movieId);        
+    }
 }

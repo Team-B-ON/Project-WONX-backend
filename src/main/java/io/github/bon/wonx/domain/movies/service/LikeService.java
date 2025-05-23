@@ -17,28 +17,28 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
-  private final LikeRepository likeRepository;
-  private final UserRepository userRepository;
-  private final MovieRepository movieRepository;
+    private final LikeRepository likeRepository;
+    private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
-  // 좋아요 추가
-  @Transactional
-  public LikeDto create(UUID userId, UUID movieId) {
-    User user = userRepository.findById(userId).orElse(null);
-    Movie movie = movieRepository.findById(movieId).orElse(null);
+    // 좋아요 추가
+    @Transactional
+    public LikeDto create(UUID userId, UUID movieId) {
+        User user = userRepository.findById(userId).orElse(null);
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        
+        Like like = new Like(user, movie);
+        Like created = likeRepository.save(like);
+        
+        return LikeDto.from(created);
+    }
+    
+    // 좋아요 삭제
+    @Transactional
+    public LikeDto delete(UUID userId, UUID movieId) {
+        Like like = likeRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
+        likeRepository.delete(like);
 
-    Like like = new Like(user, movie);
-    Like created = likeRepository.save(like);
-
-    return LikeDto.from(created);
-  }
-
-  // 좋아요 삭제
-  @Transactional
-  public LikeDto delete(UUID userId, UUID movieId) {
-    Like like = likeRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
-    likeRepository.delete(like);
-
-    return LikeDto.notLiked(userId, movieId);
-  }
+        return LikeDto.notLiked(userId, movieId);        
+    }    
 }
