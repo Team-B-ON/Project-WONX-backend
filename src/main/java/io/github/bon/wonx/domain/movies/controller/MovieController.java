@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/movies")
 public class MovieController {
+
   private final MovieService movieService;
 
   // 영화 상세 정보 조회

@@ -30,14 +30,12 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
-
 ### 환경 변수 ###
 .env
 *.env
 **/.env
 **/*.env
+application_template.md
 
 ### 로그 파일 ###
 *.log

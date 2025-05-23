@@ -2,6 +2,7 @@ package io.github.bon.wonx.domain.movies.entity;
 
 import java.util.List;
 import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "genres")
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

@@ -16,6 +16,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class MovieDto {
+
   private UUID id;
   private String title;
   private String description;

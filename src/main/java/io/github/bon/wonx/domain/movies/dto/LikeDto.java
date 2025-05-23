@@ -12,27 +12,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LikeDto {
-  private UUID id;
-  private UUID userId;
-  private UUID movieId;
-  private LocalDateTime createdAt;
-  private boolean isLiked;
 
-  public static LikeDto from(Like like) {
-    return new LikeDto(
-        like.getId(),
-        like.getUser().getId(),
-        like.getMovie().getId(),
-        like.getCreatedAt(),
-        true);
-  }
+    private UUID id;
+    private UUID userId;
+    private UUID movieId;
+    private LocalDateTime createdAt;
+    private boolean isLiked;
 
-  public static LikeDto notLiked(UUID userId, UUID movieId) {
-    return new LikeDto(
-        null,
-        userId,
-        movieId,
-        null,
-        false);
-  }
+    public static LikeDto from(Like like) {
+        return new LikeDto(
+                like.getId(),
+                like.getUser().getId(),
+                like.getMovie().getId(),
+                like.getCreatedAt(),
+                true);
+    }
+
+    public static LikeDto notLiked(UUID userId, UUID movieId) {
+        return new LikeDto(
+                null,
+                userId,
+                movieId,
+                null,
+                false);
+    }
 }

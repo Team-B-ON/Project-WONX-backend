@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/movies/{id}/like")
 @RequiredArgsConstructor
 public class LikeController {
+
   private final LikeService likeService;
 
   // 좋아요 추가

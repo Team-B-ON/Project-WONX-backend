@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -43,5 +44,4 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
   // 연관 검색어 추천용 전체 영화 제목 가져오기
   @Query("SELECT m.title FROM Movie m")
   List<String> findAllTitles();
-
 }

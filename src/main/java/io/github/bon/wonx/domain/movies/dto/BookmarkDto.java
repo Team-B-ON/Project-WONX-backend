@@ -12,27 +12,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookmarkDto {
-  private UUID id;
-  private UUID userId;
-  private UUID movieId;
-  private LocalDateTime createdAt;
-  private boolean isBookmarked;
+    private UUID id;
+    private UUID userId;
+    private UUID movieId;
+    private LocalDateTime createdAt;
+    private boolean isBookmarked;
 
-  public static BookmarkDto from(Bookmark bookmark) {
-    return new BookmarkDto(
-        bookmark.getId(),
-        bookmark.getUser().getId(),
-        bookmark.getMovie().getId(),
-        bookmark.getCreatedAt(),
-        true);
-  }
+    public static BookmarkDto from(Bookmark bookmark) {
+        return new BookmarkDto(
+                bookmark.getId(),
+                bookmark.getUser().getId(),
+                bookmark.getMovie().getId(),
+                bookmark.getCreatedAt(),
+                true);
+    }
 
-  public static BookmarkDto notBookmarked(UUID userId, UUID movieId) {
-    return new BookmarkDto(
-        null,
-        userId,
-        movieId,
-        null,
-        false);
-  }
+    public static BookmarkDto notBookmarked(UUID userId, UUID movieId) {
+        return new BookmarkDto(
+                null,
+                userId,
+                movieId,
+                null,
+                false);
+    }
 }

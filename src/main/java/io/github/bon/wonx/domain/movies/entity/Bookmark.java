@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "bookmarks", uniqueConstraints = {
+
     @UniqueConstraint(columnNames = { "user_id", "movie_id" })
 })
 public class Bookmark {

@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
     @UniqueConstraint(columnNames = { "user_id", "movie_id" })
 })
 public class Like {
+
   @Id
   @GeneratedValue
   @Column(name = "id", updatable = false, nullable = false)
