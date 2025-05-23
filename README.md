@@ -14,3 +14,8 @@ exit
 
 # .jar 파일 만드는 방법
 # .env에 있는 모든 파일을 하드코딩 후 mvn clean package
+
+# s3 관련 프론트에서 가져오는 방법
+<video controls autoplay>
+  <source src="https://{s3-presigned-url}" type="video/mp4" />
+</video>

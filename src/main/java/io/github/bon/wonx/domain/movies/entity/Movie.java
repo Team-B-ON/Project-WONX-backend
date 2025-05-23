@@ -8,6 +8,8 @@ import java.util.UUID;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -54,6 +56,10 @@ public class Movie {
 
     @Column(name = "age_rating_reason")
     private String ageRatingReason;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "required_plan", nullable = false)
+    private MovieLevel requiredPlan;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
