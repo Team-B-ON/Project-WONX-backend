@@ -52,3 +52,6 @@ logs/
 /*.swp
 /.DS_Store
 Thumbs.db
+
+### AWS 관련 ###
+sql_template.md

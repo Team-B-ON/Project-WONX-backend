@@ -106,4 +106,12 @@ public class AuthService {
 
         return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
+
+    @Transactional
+    public void logout(UUID userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        // 저장된 리프레시 토큰 삭제
+        refreshTokenRepository.deleteByUser(user);
+    }
 }
