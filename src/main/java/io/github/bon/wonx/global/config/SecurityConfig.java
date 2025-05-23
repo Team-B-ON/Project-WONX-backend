@@ -4,19 +4,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-        .csrf(csrf -> csrf.disable())
+        .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화 (API 서버에서 자주 씀)
         .authorizeHttpRequests(auth -> auth
-            .anyRequest().authenticated() // 모든 요청은 인증 필요
+
+            .anyRequest().authenticated() // 나머지는 인증 필요
         )
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt()) // JWT 방식 인증
-        .formLogin(login -> login.disable()) // 폼 로그인 사용 안 함
-        .logout(logout -> logout.disable()); // 로그아웃도 비활성화
+        .formLogin(withDefaults()) // 기본 로그인 폼 사용
+        .logout(withDefaults()); // 기본 로그아웃 처리
 
     return http.build();
   }
