@@ -3,9 +3,11 @@ package io.github.bon.wonx.domain.auth;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +46,19 @@ public class AuthController {
     public ResponseEntity<TokenResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) {
         TokenResponseDto newTokens = authService.refresh(requestDto.getRefreshToken());
         return ResponseEntity.ok(newTokens);
+    }
+
+    // 4. 로그아웃 = 토큰 만료
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @RequestHeader("Authorization") String authorizationHeader) {
+        // "Bearer <accessToken>" 에서 토큰 부분만 분리
+        String accessToken = authorizationHeader.replace("Bearer ", "");
+        // 기존에 만들어둔 extractUserIdFromToken 으로 userId 추출
+        UUID userId = UUID.fromString(authService.extractUserIdFromToken(accessToken));
+        // 실제 토큰 삭제 로직 호출
+        authService.logout(userId);
+        // No Content 반환
+        return ResponseEntity.noContent().build();
     }
 }
