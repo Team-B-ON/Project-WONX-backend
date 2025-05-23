@@ -20,19 +20,21 @@ public class BookmarkDto {
 
     public static BookmarkDto from(Bookmark bookmark) {
         return new BookmarkDto(
-                bookmark.getId(),
-                bookmark.getUser().getId(),
-                bookmark.getMovie().getId(),
-                bookmark.getCreatedAt(),
-                true);
+            bookmark.getId(),
+            bookmark.getUser().getId(),
+            bookmark.getMovie().getId(),
+            bookmark.getCreatedAt(),
+            true
+        );
     }
 
     public static BookmarkDto notBookmarked(UUID userId, UUID movieId) {
         return new BookmarkDto(
-                null,
-                userId,
-                movieId,
-                null,
-                false);
+            null,
+            userId,
+            movieId,
+            null,
+            false
+        );
     }
 }

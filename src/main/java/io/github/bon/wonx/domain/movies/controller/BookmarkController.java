@@ -17,21 +17,21 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/movies/{id}/bookmark")
 @RequiredArgsConstructor
 public class BookmarkController {
-  private final BookmarkService bookmarkService;
+    private final BookmarkService bookmarkService;
+    
+    // 북마크 추가
+    @PostMapping("")
+    public ResponseEntity<BookmarkDto> create(@PathVariable UUID id) {
+        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+        BookmarkDto createdDto = bookmarkService.create(userId, id);
+        return ResponseEntity.ok(createdDto);
+    }
 
-  // 북마크 추가
-  @PostMapping("")
-  public ResponseEntity<BookmarkDto> create(@PathVariable UUID id) {
-    UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111"); // 임시 id
-    BookmarkDto createdDto = bookmarkService.create(userId, id);
-    return ResponseEntity.ok(createdDto);
-  }
-
-  // 북마크 취소
-  @DeleteMapping("")
-  public ResponseEntity<BookmarkDto> delete(@PathVariable UUID id) {
-    UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111"); // 임시 id
-    BookmarkDto deletedDto = bookmarkService.delete(userId, id);
-    return ResponseEntity.ok(deletedDto);
-  }
+    // 북마크 취소
+    @DeleteMapping("")
+    public ResponseEntity<BookmarkDto> delete(@PathVariable UUID id) {
+        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+        BookmarkDto deletedDto = bookmarkService.delete(userId, id);
+        return ResponseEntity.ok(deletedDto);
+    }
 }

@@ -17,22 +17,21 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/movies/{id}/like")
 @RequiredArgsConstructor
 public class LikeController {
+    private final LikeService likeService;
 
-  private final LikeService likeService;
+    // 좋아요 추가
+    @PostMapping("")
+    public ResponseEntity<LikeDto> create(@PathVariable UUID id) {
+        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+        LikeDto createdDto = likeService.create(userId, id);
+        return ResponseEntity.ok(createdDto);
+    }
 
-  // 좋아요 추가
-  @PostMapping("")
-  public ResponseEntity<LikeDto> create(@PathVariable UUID id) {
-    UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111"); // 임시 id
-    LikeDto createdDto = likeService.create(userId, id);
-    return ResponseEntity.ok(createdDto);
-  }
-
-  // 좋아요 삭제
-  @DeleteMapping("")
-  public ResponseEntity<LikeDto> delete(@PathVariable UUID id) {
-    UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111"); // 임시 id
-    LikeDto deletedDto = likeService.delete(userId, id);
-    return ResponseEntity.ok(deletedDto);
-  }
+    // 좋아요 삭제
+    @DeleteMapping("")
+    public ResponseEntity<LikeDto> delete(@PathVariable UUID id) {
+        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+        LikeDto deletedDto = likeService.delete(userId, id);
+        return ResponseEntity.ok(deletedDto);
+    }
 }

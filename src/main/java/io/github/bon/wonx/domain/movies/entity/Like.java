@@ -24,29 +24,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "likes", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "user_id", "movie_id" })
+    @UniqueConstraint(columnNames = {"user_id", "movie_id"})
 })
 public class Like {
+    @Id
+    @GeneratedValue
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
-  @Id
-  @GeneratedValue
-  @Column(name = "id", updatable = false, nullable = false)
-  private UUID id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "video_id", nullable = false)
+    private Movie movie;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "video_id", nullable = false)
-  private Movie movie;
-
-  @Column(name = "created_at", nullable = false, updatable = false)
-  @CreationTimestamp
-  private LocalDateTime createdAt;
-
-  public Like(User user, Movie movie) {
-    this.user = user;
-    this.movie = movie;
-  }
+    public Like(User user, Movie movie) {
+        this.user = user;
+        this.movie = movie;
+    }
 }
