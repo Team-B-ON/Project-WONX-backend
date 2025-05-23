@@ -41,6 +41,19 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+		<!-- Spring Security (로그인 유저 인증, 권한 주입용) -->
+		<dependency>
+  		<groupId>org.springframework.boot</groupId>
+  		<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- .env 파일 로드용 -->
+		<dependency>
+  		<groupId>io.github.cdimascio</groupId>
+  		<artifactId>java-dotenv</artifactId>
+  		<version>5.2.2</version>
+		</dependency>
+
         <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
