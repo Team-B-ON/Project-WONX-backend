@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import io.github.bon.wonx.domain.reviews.Review;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -79,4 +80,7 @@ public class Movie {
     // 인기 콘텐츠 정렬
     @Column(name = "view_count")
     private Integer viewCount;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 }

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import io.github.bon.wonx.domain.movies.entity.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
@@ -32,4 +33,10 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     // 추천 콘텐츠 정렬시 조회수가 높은 영화순
     List<Movie> findDistinctByGenresInAndIdNotInOrderByViewCountDesc(List<Genre> genres, List<UUID> excludeIds);
 
+    // 검색시 이름에 키워드 포함
+    List<Movie> findByTitleContainingIgnoreCase(String keyword);
+
+    // 연관 검색어 추천용 전체 영화 제목 가져오기
+    @Query("SELECT m.title FROM Movie m")
+    List<String> findAllTitles();
 }
