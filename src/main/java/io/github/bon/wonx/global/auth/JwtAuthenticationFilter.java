@@ -25,10 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-        @NonNull HttpServletRequest request,
-        @NonNull HttpServletResponse response,
-        @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
 
@@ -52,11 +51,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else {
             // 로그인/회원가입이 아닌데 헤더 없으면 거부
             String path = request.getRequestURI();
-            if (!path.startsWith("/api/auth")) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Missing Authorization header");
+
+            // if (!path.startsWith("/api/auth")) {
+            if (path.startsWith("/api/auth") || path.startsWith("/api/home")) {
+                filterChain.doFilter(request, response);
                 return;
             }
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Missing Authorization header");
+            return;
+
         }
 
         filterChain.doFilter(request, response);
