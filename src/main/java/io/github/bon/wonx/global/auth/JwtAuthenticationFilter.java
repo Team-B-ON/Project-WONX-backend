@@ -35,16 +35,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        String method = request.getMethod();
 
         // 1. 인증 없이 접근 가능한 경로
         if (
             path.equals("/api/auth/send-link") ||
             path.equals("/api/auth/refresh") ||
             path.startsWith("/api/home") ||
-            path.startsWith("/api/movies") ||
-            path.startsWith("/api/genres") ||
-            path.startsWith("/api/people") ||
-            path.startsWith("/api/mypage")
+            (path.startsWith("/api/movies")  && method.equals("GET")) ||
+            (path.startsWith("/api/genres")  && method.equals("GET")) ||
+            (path.startsWith("/api/people")  && method.equals("GET")) ||
+            (path.startsWith("/api/mypage")  && method.equals("GET"))
         ) {
             filterChain.doFilter(request, response);
             return;
