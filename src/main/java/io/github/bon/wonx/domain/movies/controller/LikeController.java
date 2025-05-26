@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.movies.dto.LikeDto;
 import io.github.bon.wonx.domain.movies.service.LikeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,16 +22,16 @@ public class LikeController {
 
     // 좋아요 추가
     @PostMapping("")
-    public ResponseEntity<LikeDto> create(@PathVariable UUID id) {
-        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+    public ResponseEntity<LikeDto> create(@PathVariable UUID id, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
         LikeDto createdDto = likeService.create(userId, id);
         return ResponseEntity.ok(createdDto);
     }
 
     // 좋아요 삭제
     @DeleteMapping("")
-    public ResponseEntity<LikeDto> delete(@PathVariable UUID id) {
-        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+    public ResponseEntity<LikeDto> delete(@PathVariable UUID id, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
         LikeDto deletedDto = likeService.delete(userId, id);
         return ResponseEntity.ok(deletedDto);
     }

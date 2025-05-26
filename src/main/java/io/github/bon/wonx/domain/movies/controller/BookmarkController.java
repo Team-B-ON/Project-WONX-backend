@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.movies.dto.BookmarkDto;
 import io.github.bon.wonx.domain.movies.service.BookmarkService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,16 +22,16 @@ public class BookmarkController {
     
     // 북마크 추가
     @PostMapping("")
-    public ResponseEntity<BookmarkDto> create(@PathVariable UUID id) {
-        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+    public ResponseEntity<BookmarkDto> create(@PathVariable UUID id, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
         BookmarkDto createdDto = bookmarkService.create(userId, id);
         return ResponseEntity.ok(createdDto);
     }
 
     // 북마크 취소
     @DeleteMapping("")
-    public ResponseEntity<BookmarkDto> delete(@PathVariable UUID id) {
-        UUID userId = UUID.fromString("11111111-1111-1111-1111-111111111111");  // 임시 id
+    public ResponseEntity<BookmarkDto> delete(@PathVariable UUID id, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
         BookmarkDto deletedDto = bookmarkService.delete(userId, id);
         return ResponseEntity.ok(deletedDto);
     }
