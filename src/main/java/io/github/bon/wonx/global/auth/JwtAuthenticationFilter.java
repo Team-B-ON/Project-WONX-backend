@@ -39,8 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 1. 인증 없이 접근 가능한 경로
         if (
-            path.equals("/api/auth/send-link") ||
-            path.equals("/api/auth/refresh") ||
+            (path.startsWith("/api/auth") && !path.contains("/logout")) ||
             path.startsWith("/api/home") ||
             (path.startsWith("/api/movies")  && method.equals("GET")) ||
             (path.startsWith("/api/genres")  && method.equals("GET")) ||
