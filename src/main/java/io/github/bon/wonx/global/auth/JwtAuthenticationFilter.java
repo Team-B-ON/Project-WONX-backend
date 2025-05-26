@@ -40,11 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (
             path.equals("/api/auth/send-link") ||
             path.equals("/api/auth/refresh") ||
-            path.equals("/api/home") ||
-            path.equals("/api/movies") ||
-            path.equals("/api/genres") ||
-            path.equals("/api/people") ||
-            path.equals("/api/mypage")
+            path.startsWith("/api/home") ||
+            path.startsWith("/api/movies") ||
+            path.startsWith("/api/genres") ||
+            path.startsWith("/api/people") ||
+            path.startsWith("/api/mypage")
         ) {
             filterChain.doFilter(request, response);
             return;
