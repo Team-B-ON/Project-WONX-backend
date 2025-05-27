@@ -1,6 +1,7 @@
 package io.github.bon.wonx.global.auth;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.lang.NonNull;
@@ -10,6 +11,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.github.bon.wonx.domain.auth.token.JwtProvider;
 import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +33,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        // 1. 인증 없이 접근 가능한 경로
+        if ((path.startsWith("/api/auth") && !path.contains("/logout")) ||
+                path.startsWith("/api/home") ||
+                (path.startsWith("/api/movies") && method.equals("GET")) ||
+                (path.startsWith("/api/genres") && method.equals("GET")) ||
+                (path.startsWith("/api/people") && method.equals("GET")) ||
+                (path.startsWith("/api/mypage") && method.equals("GET"))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 2. 나머지 경로는 토큰 검증
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -43,27 +62,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 request.setAttribute("userId", user.getId());
                 request.setAttribute("userPlan", user.getPlanType());
 
-            } catch (Exception e) {
+                filterChain.doFilter(request, response); // 인증 성공 → 다음 필터로
+            } catch (ExpiredJwtException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired token");
-                return;
+                response.getWriter().write("Token has expired.");
+            } catch (MalformedJwtException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Malformed token.");
+            } catch (JwtException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid JWT token.");
+            } catch (IllegalArgumentException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Invalid user ID format.");
+            } catch (NoSuchElementException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("User not found.");
+            } catch (Exception e) {
+                e.printStackTrace(); // 로그
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("An unexpected server error occurred.");
             }
         } else {
-            // 로그인/회원가입이 아닌데 헤더 없으면 거부
-            String path = request.getRequestURI();
-
-            // if (!path.startsWith("/api/auth")) {
-            if (path.startsWith("/api/auth") || path.startsWith("/api/home") || path.startsWith("/api/search")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
+            // 토큰 아예 없음
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Missing Authorization header");
-            return;
-
         }
-
-        filterChain.doFilter(request, response);
     }
+
 }
