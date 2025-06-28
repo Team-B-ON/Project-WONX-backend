@@ -10,11 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
-@Table(name="genres")
+@Table(name = "genres")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +28,12 @@ public class Genre {
 
     @Column
     private String name;
-    
+
     @ManyToMany(mappedBy = "genres")
     private List<Movie> movies;
+
+    // 추천 기능 테스트용 단일 생성자 -> 추후 삭제 가능
+    public Genre(String name) {
+        this.name = name;
+    }
 }
