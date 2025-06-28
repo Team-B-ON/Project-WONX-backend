@@ -29,21 +29,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String path = request.getRequestURI();
         String method = request.getMethod();
 
         // 1. 인증 없이 접근 가능한 경로
-        if ((path.startsWith("/api/auth") && !path.contains("/logout")) ||
-                path.startsWith("/api/home") ||
-                (path.startsWith("/api/movies") && method.equals("GET")) ||
-                (path.startsWith("/api/genres") && method.equals("GET")) ||
-                (path.startsWith("/api/people") && method.equals("GET")) ||
-                (path.startsWith("/api/mypage") && method.equals("GET")) ||
-                (path.startsWith("/api/search") && method.equals("GET"))) {
+        if (
+            (path.startsWith("/api/auth") && !path.contains("/logout")) ||
+            path.startsWith("/api/home") ||
+            (path.startsWith("/api/movies")  && method.equals("GET")) ||
+            (path.startsWith("/api/genres")  && method.equals("GET")) ||
+            (path.startsWith("/api/people")  && method.equals("GET")) ||
+            (path.startsWith("/api/mypage")  && method.equals("GET"))
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -80,7 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.getWriter().write("User not found.");
             } catch (Exception e) {
-                e.printStackTrace(); // 로그
+                e.printStackTrace(); // ✅ 로그
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().write("An unexpected server error occurred.");
             }
