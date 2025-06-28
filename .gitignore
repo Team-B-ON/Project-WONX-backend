@@ -56,3 +56,6 @@ Thumbs.db
 ### AWS 관련 ###
 sql_template.md
 application_template_for_env.md
+
+### 테스트 파일 ###
+request.http

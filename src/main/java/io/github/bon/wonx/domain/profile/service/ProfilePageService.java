@@ -1,38 +1,56 @@
 package io.github.bon.wonx.domain.profile.service;
 
-import java.util.UUID;
-
-import io.github.bon.wonx.domain.profile.DTO.PublicProfileDto;
-import io.github.bon.wonx.domain.user.User;
-import io.github.bon.wonx.domain.user.UserRepository;
+import io.github.bon.wonx.domain.follow.repository.FollowRepository;
+import io.github.bon.wonx.domain.profile.dto.*;
+import io.github.bon.wonx.domain.user.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-@Service
-public class ProfilePageService {
-    private final UserRepository userRepo;
+import java.util.UUID;
 
-    public ProfilePageService(UserRepository userRepo) {
-        this.userRepo = userRepo;
+@Service @RequiredArgsConstructor
+public class ProfilePageService {
+
+    private final UserRepository    userRepo;
+    private final FollowRepository  followRepo;
+
+    public PublicProfileDto getProfileDetail(UUID targetId, UUID viewerId) {
+
+        User target = userRepo.findById(targetId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        boolean isMe        = viewerId != null && targetId.equals(viewerId);
+        boolean isFollowing = !isMe && viewerId != null &&
+                followRepo.existsByIdFollowerIdAndIdFolloweeId(viewerId, targetId);
+
+        long followers  = followRepo.countByIdFolloweeId(targetId);
+        long followings = followRepo.countByIdFollowerId(targetId);
+
+        return PublicProfileDto.builder()
+                .userId(target.getId())
+                .email(target.getEmail())
+                .nickname(target.getNickname())
+                .profileImageUrl(target.getProfileImageUrl())
+                .bio(target.getBio())
+                .joinedAt(target.getCreatedAt())
+                .isMe(isMe)
+                .isFollowing(isFollowing)
+                .followerCount(followers)
+                .followingCount(followings)
+                .build();
     }
 
-    public PublicProfileDto getProfileDetail(UUID userId) {
+    @Transactional
+    public void updateProfile(UUID userId, ProfileUpdateRequest dto) {
+
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User not found: " + userId));
-        // 2) 취향분석 요약
-        // 3) 팔로우/팔로잉 카운트
-        // 4) DTO 조립
-        return PublicProfileDto.builder()
-                .userId(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .profileImageUrl(user.getProfileImageUrl())
-                .bio(user.getBio())
-                .joinedAt(user.getCreatedAt())
-                // followerCount()
-                // followingCount()
-                .build();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (dto.getNickname()        != null) user.updateNickname(dto.getNickname());
+        if (dto.getBio()             != null) user.updateBio(dto.getBio());
+        if (dto.getProfileImageUrl() != null) user.updateProfileImageUrl(dto.getProfileImageUrl());
     }
 }

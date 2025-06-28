@@ -1,4 +1,4 @@
-package io.github.bon.wonx.domain.profile.DTO;
+package io.github.bon.wonx.domain.profile.dto;
 
 import java.util.UUID;
 
