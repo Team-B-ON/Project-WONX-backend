@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import io.github.bon.wonx.domain.reviews.Review;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,12 +22,14 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="videos")
+@Table(name = "videos")
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Movie {
@@ -64,13 +67,20 @@ public class Movie {
     private MovieLevel requiredPlan = MovieLevel.BASIC;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "video_genre",
-        joinColumns = @JoinColumn(name = "video_id"),
-        inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
+    @JoinTable(name = "video_genre", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MoviePerson> moviePersons = new ArrayList<>();
+
+    // 박스오피스 순위 정렬
+    @Column(name = "box_office_rank")
+    private Integer boxOfficeRank;
+
+    // 인기 콘텐츠 정렬
+    @Column(name = "view_count")
+    private Integer viewCount;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 }
