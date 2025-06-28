@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.user.User;
@@ -37,14 +35,13 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id", nullable = false)
     private Movie movie;
 
     @Column(nullable = false)
-    @Min(1)
-    @Max(10)
+    @Min(1) @Max(10)
     private Integer rating;
 
     @Column
@@ -84,21 +81,22 @@ public class Review {
             throw new IllegalArgumentException("댓글 생성 실패: 유저의 id가 잘못됐습니다.");
 
         return new Review(
-                dto.getId(),
-                user,
-                movie,
-                dto.getRating(),
-                dto.getContent(),
-                dto.getIsAnonymous(),
-                dto.getIsDeleted(),
-                dto.getCreatedAt());
+            dto.getId(),
+            user,
+            movie,
+            dto.getRating(),
+            dto.getContent(),
+            dto.getIsAnonymous(),
+            dto.getIsDeleted(),
+            dto.getCreatedAt()
+        );
     }
 
     public void patch(ReviewDto dto) {
         // 예외 발생
         if (this.id != dto.getId())
             throw new IllegalArgumentException("댓글 수정 실패: 잘못된 id가 입력됐습니다.");
-
+            
         if (dto.getContent() != null)
             this.content = dto.getContent();
     }
