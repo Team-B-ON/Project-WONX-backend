@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class BoxOfficeDto {
 
-  private String title; // 영화 제목
-  private String posterUrl; // 영화 포스터 이미지 URL
-  private int boxOfficeRank; // 박스오피스 순위
+  private String title;
+  private String posterUrl;
+  private int boxOfficeRank;
 
   public BoxOfficeDto(String title, String posterUrl, int boxOfficeRank) {
     this.title = title;
