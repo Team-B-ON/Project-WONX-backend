@@ -28,11 +28,7 @@ public class MyPageController {
 
     @GetMapping
     public PublicProfileDto getMyProfile(HttpServletRequest req) {
-        // 더미 사용
         UUID me = (UUID) req.getAttribute("userId");
-        if (me == null) {
-            me = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        }
         return pageService.getProfileDetail(me, me);
     }
 
