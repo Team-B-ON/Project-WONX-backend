@@ -27,7 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://wonx.ap-northeast-2.elasticbeanstalk.com/") // 배포 시 프론트 주소로 변경
+            .allowedOrigins("http://wonx.ap-northeast-2.elasticbeanstalk.com", "http://localhost:5173") // 배포 시 프론트 주소로 변경
             .allowedMethods("*")
             .allowCredentials(true);
     }
