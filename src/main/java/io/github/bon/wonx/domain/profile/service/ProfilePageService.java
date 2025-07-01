@@ -11,46 +11,57 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class ProfilePageService {
 
     private final UserRepository    userRepo;
     private final FollowRepository  followRepo;
 
-    public PublicProfileDto getProfileDetail(UUID targetId, UUID viewerId) {
-
-        User target = userRepo.findById(targetId)
+    @Transactional
+    public PublicProfileDto getProfileDetail(UUID requesterId, UUID targetId) {
+        User user = userRepo.findById(targetId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return buildDto(user, requesterId);
+    }
 
-        boolean isMe        = viewerId != null && targetId.equals(viewerId);
-        boolean isFollowing = !isMe && viewerId != null &&
-                followRepo.existsByIdFollowerIdAndIdFolloweeId(viewerId, targetId);
-
-        long followers  = followRepo.countByIdFolloweeId(targetId);
-        long followings = followRepo.countByIdFollowerId(targetId);
+    private PublicProfileDto buildDto(User user, UUID requesterId) {
+        UUID profileId = user.getId();
+        boolean isMe = profileId.equals(requesterId);
+        boolean isFollowing = !isMe && followRepo.existsById_FollowerIdAndId_FolloweeId(requesterId, profileId);
+        long followerCount = followRepo.countById_FolloweeId(profileId);
+        long followingCount = followRepo.countById_FollowerId(profileId);
 
         return PublicProfileDto.builder()
-                .userId(target.getId())
-                .email(target.getEmail())
-                .nickname(target.getNickname())
-                .profileImageUrl(target.getProfileImageUrl())
-                .bio(target.getBio())
-                .joinedAt(target.getCreatedAt())
+                .userId(profileId)
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
+                .bio(user.getBio())
+                .joinedAt(user.getCreatedAt())
                 .isMe(isMe)
                 .isFollowing(isFollowing)
-                .followerCount(followers)
-                .followingCount(followings)
+                .followerCount(followerCount)
+                .followingCount(followingCount)
                 .build();
     }
 
     @Transactional
-    public void updateProfile(UUID userId, ProfileUpdateRequest dto) {
-
+    public PublicProfileDto updateProfile(UUID userId, ProfileUpdateRequest dto) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if (dto.getNickname()        != null) user.updateNickname(dto.getNickname());
-        if (dto.getBio()             != null) user.updateBio(dto.getBio());
-        if (dto.getProfileImageUrl() != null) user.updateProfileImageUrl(dto.getProfileImageUrl());
+        if (dto.getNickname() != null) {
+            user.updateNickname(dto.getNickname());
+        }
+        if (dto.getBio() != null) {
+            user.updateBio(dto.getBio());
+        }
+        if (dto.getProfileImageUrl() != null) {
+            user.updateProfileImageUrl(dto.getProfileImageUrl());
+        }
+
+        // 변경된 엔티티를 DTO로 변환하여 반환
+        return buildDto(user, userId);
     }
 }
