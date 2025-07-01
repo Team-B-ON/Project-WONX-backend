@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import io.github.bon.wonx.domain.auth.mail.MailRequestDto;
 import io.github.bon.wonx.domain.auth.mail.MailService;
@@ -25,12 +27,13 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final Environment env;
 
     @Transactional
     public void sendMagicLink(MailRequestDto requestDto) {
         String email = requestDto.getEmail();
 
-        // 이메일로 유저 조회 또는 생성
+        // 유저 생성 or 조회
         User user = userRepository.findByEmail(email)
             .orElseGet(() -> {
                 String baseNickname = email.split("@")[0];
@@ -43,27 +46,32 @@ public class AuthService {
                     .build());
             });
 
-        // access token을 magic link용 임시 토큰으로 사용
-        String magicLinkToken = jwtProvider.createAccessToken(user.getId());
+        // 토큰 발급
+        String accessToken = jwtProvider.createAccessToken(user.getId());
+        String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
-        // magic link 생성
-        String magicLink = "http://wonx.ap-northeast-2.elasticbeanstalk.com/api/auth/verify?token=" + magicLinkToken;
+        // 프론트 URL 구성
+        String frontendBase = env.getProperty("app.frontend.url");
+        String callbackPath = "/auth/callback";
 
-        // 이메일 발송
+        String magicLink = UriComponentsBuilder
+            .fromHttpUrl(frontendBase + callbackPath)
+            .queryParam("accessToken", accessToken)
+            .queryParam("refreshToken", refreshToken)
+            .toUriString();
+
+        // 이메일 전송
         mailService.sendMagicLink(email, magicLink);
     }
 
     @Transactional
     public TokenResponseDto authenticate(UUID userId) {
-        // access + refresh token 발급
         String accessToken = jwtProvider.createAccessToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
-        // 유저 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // refresh token 저장 또는 갱신
         Optional<RefreshToken> existing = refreshTokenRepository.findByUser(user);
         if (existing.isPresent()) {
             existing.get().updateToken(refreshToken, LocalDateTime.now().plusDays(7));
@@ -111,7 +119,6 @@ public class AuthService {
     public void logout(UUID userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        // 저장된 리프레시 토큰 삭제
         refreshTokenRepository.deleteByUser(user);
     }
 }
