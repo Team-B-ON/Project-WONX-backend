@@ -75,26 +75,23 @@ public class Review {
         // 예외 발생
         if (dto.getId() != null)
             throw new IllegalArgumentException("댓글 생성 실패: 댓글의 id가 없어야 합니다.");
-        if (dto.getMovie().getId() != movie.getId())
+        if (!dto.getMovieId().equals(movie.getId()))
             throw new IllegalArgumentException("댓글 생성 실패: 게시글의 id가 잘못됐습니다.");
-        if (dto.getUser().getId() != user.getId())
+        if (!dto.getUserId().equals(user.getId()))
             throw new IllegalArgumentException("댓글 생성 실패: 유저의 id가 잘못됐습니다.");
 
         return new Review(
-            dto.getId(),
             user,
             movie,
             dto.getRating(),
             dto.getContent(),
-            dto.getIsAnonymous(),
-            dto.getIsDeleted(),
-            dto.getCreatedAt()
+            dto.getIsAnonymous()
         );
     }
 
     public void patch(ReviewDto dto) {
         // 예외 발생
-        if (this.id != dto.getId())
+        if (!this.id.equals(dto.getId()))
             throw new IllegalArgumentException("댓글 수정 실패: 잘못된 id가 입력됐습니다.");
             
         if (dto.getContent() != null)

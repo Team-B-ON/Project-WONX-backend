@@ -24,6 +24,8 @@ public class BookmarkController {
     @PostMapping("")
     public ResponseEntity<BookmarkDto> create(@PathVariable UUID id, HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
+        System.out.println("controller userId = " + userId + ", movieId = " + id);
+
         BookmarkDto createdDto = bookmarkService.create(userId, id);
         return ResponseEntity.ok(createdDto);
     }

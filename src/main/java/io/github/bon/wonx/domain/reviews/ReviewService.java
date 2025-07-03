@@ -10,7 +10,7 @@ import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,6 +21,7 @@ public class ReviewService {
     private final UserRepository userRepository;
 
     // 댓글 조회
+    @Transactional(readOnly = true)
     public List<ReviewDto> reviews(UUID id) {
         return reviewRepository.findByMovieId(id)
                 .stream()
@@ -30,11 +31,11 @@ public class ReviewService {
 
     // 댓글 생성
     @Transactional
-    public ReviewDto create(UUID id, ReviewDto dto) {
-        Movie movie = movieRepository.findById(id) 
+    public ReviewDto create(UUID movieId, ReviewDto dto) {
+        Movie movie = movieRepository.findById(movieId) 
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 생성 실패: " + "대상 영화가 없습니다."));
-        User user = userRepository.findById(id)
+        User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 생성 실패: " + "대상 유저가 없습니다."));
         Review review = Review.createReview(dto, movie, user);
