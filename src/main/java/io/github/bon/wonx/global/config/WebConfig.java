@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://wonx.ap-northeast-2.elasticbeanstalk.com", "http://localhost:5173")
+            .allowedOrigins("http://wonx.ap-northeast-2.elasticbeanstalk.com", "http://localhost:5173", "https://wonx.vercel.app", "http://wonx.vercel.app")
             .allowedMethods("*")
             .allowedHeaders("*")
             .allowCredentials(true);
