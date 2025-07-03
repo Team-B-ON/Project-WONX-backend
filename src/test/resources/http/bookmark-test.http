@@ -1,0 +1,8 @@
+### 북마크 추가 요청
+POST http://localhost:8080/api/movies/32e7180e-3797-11f0-aea1-0660a2a568cd/bookmark
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NGQ2ZDljNC0yY2RkLTRiZWQtYTc2NC05NzA0MjBmNGE4NTIiLCJpYXQiOjE3NDgyNDg1NjcsImV4cCI6MTc0ODI1MjE2N30.Czyz9SfOb9O-1QMceRamizUCkWSt2kyo8HH26YM9zk8
+Content-Type: application/json
+
+{}
+
+###

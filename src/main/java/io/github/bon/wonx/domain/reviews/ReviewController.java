@@ -35,15 +35,15 @@ public class ReviewController {
 
     // 리뷰 수정
     @PatchMapping("/api/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> update(@PathVariable UUID id, @RequestBody ReviewDto dto) {
-        ReviewDto updatedDto = reviewsService.update(id, dto);
+    public ResponseEntity<ReviewDto> update(@PathVariable("reviewId") UUID reviewId, @RequestBody ReviewDto dto) {
+        ReviewDto updatedDto = reviewsService.update(reviewId, dto);
         return ResponseEntity.ok(updatedDto);
     }
 
     // 리뷰 삭제
     @DeleteMapping("/api/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> delete(@PathVariable UUID id) {
-        ReviewDto deletedDto = reviewsService.delete(id);
+    public ResponseEntity<ReviewDto> delete(@PathVariable("reviewId") UUID reviewId) {
+        ReviewDto deletedDto = reviewsService.delete(reviewId);
         return ResponseEntity.ok(deletedDto);
     }
 }
