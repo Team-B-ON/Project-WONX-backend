@@ -51,4 +51,13 @@ public class User {
         this.planType = PlanType.FREE;
     }
 }
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+    public void updateBio(String bio) {
+        this.bio = bio;
+    }
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }
