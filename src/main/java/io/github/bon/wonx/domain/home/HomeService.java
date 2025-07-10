@@ -67,6 +67,7 @@ public class HomeService {
   public List<BoxOfficeDto> getBoxOfficeMovies() {
     return movieRepository.findTop10ByBoxOfficeRankIsNotNullOrderByBoxOfficeRankAsc().stream()
         .map(movie -> new BoxOfficeDto(
+            movie.getId().toString(),
             movie.getTitle(),
             movie.getPosterUrl(),
             movie.getBoxOfficeRank()))
@@ -99,14 +100,11 @@ public class HomeService {
 
     // 장르 정보 없을 경우 → 랜덤 추천 (조회수 상위 몇 개 중에서 무작위)
     if (preferredGenres.isEmpty()) {
-      List<Movie> popularMovies = movieRepository.findAllByOrderByViewCountDesc(Pageable.ofSize(20)); // 인기 상위 20개
-      Collections.shuffle(popularMovies); // 랜덤 섞기
+      List<Movie> popularMovies = movieRepository.findAllByOrderByViewCountDesc(Pageable.ofSize(30));
+      Collections.shuffle(popularMovies);
       return popularMovies.stream()
-          .limit(10) // 10개만 추천
-          .map(movie -> new RecommendDto(
-              movie.getTitle(),
-              movie.getPosterUrl(),
-              movie.getBoxOfficeRank()))
+          .limit(18)
+          .map(RecommendDto::new)
           .toList();
     }
 
@@ -119,12 +117,12 @@ public class HomeService {
     List<Movie> recommended = movieRepository
         .findDistinctByGenresInAndIdNotInOrderByViewCountDesc(new ArrayList<>(preferredGenres), excludeIds);
 
+    Collections.shuffle(recommended); // 인기순 중 랜덤성 추가
+
     // DTO 변환
     return recommended.stream()
-        .map(movie -> new RecommendDto(
-            movie.getTitle(),
-            movie.getPosterUrl(),
-            movie.getBoxOfficeRank()))
+        .limit(18)
+        .map(RecommendDto::new)
         .toList();
   }
 
