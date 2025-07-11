@@ -15,4 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     // 여러 영화의 리뷰 조회 (← 이거 추가!)
     List<Review> findByMovieIdIn(List<UUID> movieIds);
 
+    @Query("SELECT r.movie.id FROM Review r WHERE r.user.id = :userId")
+    List<UUID> findReviewedMovieIdsByUser(@Param("userId") UUID userId);
 }

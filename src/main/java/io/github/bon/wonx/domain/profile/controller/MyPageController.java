@@ -1,9 +1,11 @@
 package io.github.bon.wonx.domain.profile.controller;
 
 import io.github.bon.wonx.domain.follow.service.FollowService;
+import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.profile.dto.ProfileUpdateRequest;
 import io.github.bon.wonx.domain.profile.dto.PublicProfileDto;
 import io.github.bon.wonx.domain.profile.service.ProfilePageService;
+import io.github.bon.wonx.domain.reviews.ReviewDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -76,6 +78,41 @@ public class MyPageController {
                 .map(id -> pageService.getProfileDetail(me, id))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    // 최근 시청한 콘텐츠
+    @GetMapping("/recent")
+    public List<MovieDto> getRecent(HttpServletRequest req) {
+        UUID me = currentUser(req);
+        return pageService.getRecentVideos(me);
+    }
+
+    // 찜한(북마크) 콘텐츠
+    @GetMapping("/bookmarks")
+    public List<MovieDto> getBookmarks(HttpServletRequest req) {
+        UUID me = currentUser(req);
+        return pageService.getBookmarkedMovies(me);
+    }
+
+    // 시청 중인 콘텐츠
+    @GetMapping("/progress")
+    public List<MovieDto> getProgress(HttpServletRequest req) {
+        UUID me = currentUser(req);
+        return pageService.getInProgressVideos(me);
+    }
+
+    // 좋아요한 콘텐츠
+    @GetMapping("/liked")
+    public List<MovieDto> getLiked(HttpServletRequest req) {
+        UUID me = currentUser(req);
+        return pageService.getLikedMovies(me);
+    }
+
+    // 내가 작성한 리뷰 목록
+    @GetMapping("/reviews")
+    public List<ReviewDto> getMyReviews(HttpServletRequest req) {
+        UUID me = currentUser(req);
+        return pageService.getMyReviews(me);
     }
 
 }
