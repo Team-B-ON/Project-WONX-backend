@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import io.github.bon.wonx.domain.movies.entity.Like;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface LikeRepository extends JpaRepository<Like, UUID> {
     Optional<Like> findByUserIdAndMovieId(UUID userId, UUID movieId);
@@ -15,4 +17,7 @@ public interface LikeRepository extends JpaRepository<Like, UUID> {
 
     // 사용자가 좋아요한 영화 목록 전체 조회 -> 홈 사용자 추천 콘텐츠
     List<Like> findByUserId(UUID userId);
+
+    @Query("SELECT l.movie.id FROM Like l WHERE l.user.id = :userId")
+    List<UUID> findLikedMovieIdsByUser(@Param("userId") UUID userId);
 }

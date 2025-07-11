@@ -101,4 +101,10 @@ public class MovieService {
                 .map(HotMovieDto::from)
                 .toList();
     }
+
+    public List<MovieDto> findByIds(List<UUID> ids) {
+        return movieRepository.findAllById(ids).stream()
+                .map(MovieDto::from)
+                .toList();
+    }
 }

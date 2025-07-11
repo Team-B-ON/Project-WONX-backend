@@ -1,14 +1,12 @@
 package io.github.bon.wonx.domain.movies.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
@@ -65,5 +63,19 @@ public class MovieController {
             case STANDARD -> userPlan == PlanType.STANDARD || userPlan == PlanType.PREMIUM;
             case PREMIUM -> userPlan == PlanType.PREMIUM;
         };
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MovieDto>> findByIds(
+            @RequestParam(required = false) String ids
+    ) {
+        if (ids == null || ids.isBlank()) {
+            // ids 파라미터가 없으면 빈 배열 리턴하거나, 전체 목록을 리턴하도록 변경해도 되고요.
+            return ResponseEntity.ok(List.of());
+        }
+        List<UUID> uuidList = Arrays.stream(ids.split(","))
+                .map(UUID::fromString)
+                .toList();
+        return ResponseEntity.ok(movieService.findByIds(uuidList));
     }
 }
