@@ -55,6 +55,7 @@ public class HomeService {
   public List<HotTalkDto> getHotTalks() {
     return talkRepository.findTop3ByOrderByViewCountDescCreatedAtDesc().stream()
         .map(talk -> new HotTalkDto(
+            talk.getMovie().getId(), 
             talk.getMovie().getTitle(), // 영화 제목
             talk.getMovie().getPosterUrl(), // 영화 썸네일
             talk.getContent(), // 리뷰 내용
@@ -67,6 +68,7 @@ public class HomeService {
   public List<BoxOfficeDto> getBoxOfficeMovies() {
     return movieRepository.findTop10ByBoxOfficeRankIsNotNullOrderByBoxOfficeRankAsc().stream()
         .map(movie -> new BoxOfficeDto(
+            movie.getId(),
             movie.getTitle(),
             movie.getPosterUrl(),
             movie.getBoxOfficeRank()))
@@ -104,6 +106,7 @@ public class HomeService {
       return popularMovies.stream()
           .limit(10) // 10개만 추천
           .map(movie -> new RecommendDto(
+              movie.getId(),     
               movie.getTitle(),
               movie.getPosterUrl(),
               movie.getBoxOfficeRank()))
@@ -122,6 +125,7 @@ public class HomeService {
     // DTO 변환
     return recommended.stream()
         .map(movie -> new RecommendDto(
+            movie.getId(),
             movie.getTitle(),
             movie.getPosterUrl(),
             movie.getBoxOfficeRank()))
