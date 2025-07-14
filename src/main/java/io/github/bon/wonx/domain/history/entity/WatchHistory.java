@@ -5,18 +5,30 @@ import java.util.UUID;
 
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name="watch_histories")
 public class WatchHistory {
-    @Id @GeneratedValue
+
+    @Id
+    @GeneratedValue
     private UUID id;
 
-    @ManyToOne @JoinColumn(name="user_id", nullable=false)
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
     private User user;
 
-    @ManyToOne @JoinColumn(name="video_id", nullable=false)
+    @ManyToOne
+    @JoinColumn(name="video_id", nullable=false)
     private Movie movie;
 
     @Column(name="watched_at", nullable=false)
