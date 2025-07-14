@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.bon.wonx.domain.reviews.dto.ReviewCreateDto;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
+import io.github.bon.wonx.domain.reviews.dto.ReviewListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -23,9 +27,14 @@ public class ReviewController {
 
     // 리뷰 조회
     @GetMapping("/api/movies/{id}/reviews")
-    public ResponseEntity<List<ReviewDto>> reviews(@PathVariable UUID id, @RequestAttribute("userId") UUID userId) {
-        List<ReviewDto> dtos = reviewsService.reviews(id, userId);
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<ReviewListResponse> reviews(
+            @PathVariable UUID id, 
+            @RequestAttribute("userId") UUID userId,
+            @RequestParam(defaultValue = "ratingDesc") String sort,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit) {
+        ReviewListResponse response = reviewsService.reviews(id, userId, sort, offset, limit);
+        return ResponseEntity.ok(response);
     }
 
     // 리뷰 작성
