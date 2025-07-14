@@ -22,10 +22,10 @@ public class ReviewService {
 
     // 댓글 조회
     @Transactional(readOnly = true)
-    public List<ReviewDto> reviews(UUID id) {
-        return reviewRepository.findByMovieId(id)
+    public List<ReviewDto> reviews(UUID movieId, UUID currentUserId) {
+        return reviewRepository.findByMovieId(movieId)
                 .stream()
-                .map(review -> ReviewDto.from(review))
+                .map(review -> ReviewDto.from(review, currentUserId))
                 .collect(Collectors.toList());
     }
 
@@ -45,8 +45,8 @@ public class ReviewService {
             req.getContent(),
             Boolean.TRUE.equals(req.getIsAnonymous())
         );
-        Review created = reviewRepository.save(review);
-        return ReviewDto.from(created);
+        Review created = reviewRepository.saveAndFlush(review);
+        return ReviewDto.from(created, userId);
     }
 
     // 댓글 수정
