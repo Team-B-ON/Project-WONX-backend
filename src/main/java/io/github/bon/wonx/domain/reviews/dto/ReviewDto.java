@@ -1,10 +1,11 @@
-package io.github.bon.wonx.domain.reviews;
+package io.github.bon.wonx.domain.reviews.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.github.bon.wonx.domain.reviews.Review;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
