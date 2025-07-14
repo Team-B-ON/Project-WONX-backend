@@ -92,12 +92,8 @@ public class Review {
         );
     }
 
-    public void patch(ReviewDto dto) {
-        // 예외 발생
-        if (!this.id.equals(dto.getId()))
-            throw new IllegalArgumentException("댓글 수정 실패: 잘못된 id가 입력됐습니다.");
-            
-        if (dto.getContent() != null)
-            this.content = dto.getContent();
+    public void patch(String content) {
+        if (content != null && !content.isBlank())
+            this.content = content;
     }
 }

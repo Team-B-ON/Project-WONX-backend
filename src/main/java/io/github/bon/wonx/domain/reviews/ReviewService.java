@@ -16,6 +16,7 @@ import io.github.bon.wonx.domain.reviews.dto.ReviewCreateDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewListResponse;
 import io.github.bon.wonx.domain.reviews.dto.ReviewStats;
+import io.github.bon.wonx.domain.reviews.dto.ReviewUpdateDto;
 import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -116,13 +117,13 @@ public class ReviewService {
 
     // 댓글 수정
     @Transactional
-    public ReviewDto update(UUID id, ReviewDto dto) {
-        Review target = reviewRepository.findById(id)
+    public ReviewDto update(UUID reviewId, UUID currentUserId, ReviewUpdateDto req) {
+        Review target = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 수정 실패: " + "대상 댓글이 없습니다."));
-        target.patch(dto);
+        target.patch(req.getContent());
         Review updated = reviewRepository.save(target);
-        return ReviewDto.from(updated);
+        return ReviewDto.from(updated, currentUserId);
     }
 
     // 댓글 삭제

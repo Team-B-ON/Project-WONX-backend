@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.bon.wonx.domain.reviews.dto.ReviewCreateDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewListResponse;
+import io.github.bon.wonx.domain.reviews.dto.ReviewUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -49,8 +50,11 @@ public class ReviewController {
 
     // 리뷰 수정
     @PatchMapping("/api/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> update(@PathVariable("reviewId") UUID reviewId, @RequestBody ReviewDto dto) {
-        ReviewDto updatedDto = reviewsService.update(reviewId, dto);
+    public ResponseEntity<ReviewDto> update(
+            @PathVariable UUID reviewId, 
+            @RequestAttribute("usrId") UUID userId,
+            @RequestBody @Valid ReviewUpdateDto req) {
+        ReviewDto updatedDto = reviewsService.update(reviewId, userId, req);
         return ResponseEntity.ok(updatedDto);
     }
 
