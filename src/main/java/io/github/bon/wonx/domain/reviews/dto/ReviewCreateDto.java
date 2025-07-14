@@ -1,4 +1,4 @@
-package io.github.bon.wonx.domain.reviews;
+package io.github.bon.wonx.domain.reviews.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 
 import io.github.bon.wonx.domain.movies.entity.Movie;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

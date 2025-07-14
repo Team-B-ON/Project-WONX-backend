@@ -5,7 +5,7 @@ import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.profile.dto.ProfileUpdateRequest;
 import io.github.bon.wonx.domain.profile.dto.PublicProfileDto;
 import io.github.bon.wonx.domain.profile.service.ProfilePageService;
-import io.github.bon.wonx.domain.reviews.ReviewDto;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
