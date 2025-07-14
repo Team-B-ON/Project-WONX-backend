@@ -23,18 +23,11 @@ public class ReviewDto {
     private Boolean isDeleted = false;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
-    private Boolean isMine;
 
     public static ReviewDto from(Review review) {
-        return from(review, null);
-    }
-
-    public static ReviewDto from(Review review, UUID currentUserId) {
         String userNickname = review.getIsAnonymous() 
             ? "익명" 
             : review.getUser().getNickname();
-        
-        boolean isMine = currentUserId != null && review.getUser().getId().equals(currentUserId);
 
         return new ReviewDto(
             review.getId(),
@@ -45,8 +38,7 @@ public class ReviewDto {
             review.getContent(),
             review.getIsAnonymous(),
             review.getIsDeleted(),
-            review.getCreatedAt(),
-            isMine
+            review.getCreatedAt()
         );
     } 
 }
