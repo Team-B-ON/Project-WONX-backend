@@ -36,7 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 1. 인증 없이 접근 가능한 경로
-        if ((path.startsWith("/api/auth") && !path.contains("/logout"))) {
+        if ((path.startsWith("/api/auth") && !path.contains("/logout"))
+            || path.startsWith("/api/admin")) {
             filterChain.doFilter(request, response);
             return;
         }
