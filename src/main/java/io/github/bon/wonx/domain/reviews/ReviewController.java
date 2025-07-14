@@ -23,8 +23,8 @@ public class ReviewController {
 
     // 리뷰 조회
     @GetMapping("/api/movies/{id}/reviews")
-    public ResponseEntity<List<ReviewDto>> reviews(@PathVariable UUID id) {
-        List<ReviewDto> dtos = reviewsService.reviews(id);
+    public ResponseEntity<List<ReviewDto>> reviews(@PathVariable UUID id, @RequestAttribute("userId") UUID userId) {
+        List<ReviewDto> dtos = reviewsService.reviews(id, userId);
         return ResponseEntity.ok(dtos);
     }
 

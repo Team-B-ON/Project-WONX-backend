@@ -45,7 +45,7 @@ public class ReviewService {
             req.getContent(),
             Boolean.TRUE.equals(req.getIsAnonymous())
         );
-        Review created = reviewRepository.save(review);
+        Review created = reviewRepository.saveAndFlush(review);
         return ReviewDto.from(created);
     }
 
