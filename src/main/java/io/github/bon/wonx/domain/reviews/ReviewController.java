@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,8 +30,11 @@ public class ReviewController {
 
     // 리뷰 작성
     @PostMapping("/api/movies/{id}/reviews")
-    public ResponseEntity<ReviewDto> create(@PathVariable UUID id, @RequestBody ReviewDto dto) {
-        ReviewDto createdDto = reviewsService.create(id, dto);
+    public ResponseEntity<ReviewDto> create(
+            @PathVariable("id") UUID movieId, 
+            @RequestAttribute("userId") UUID userId,
+            @RequestBody @Valid ReviewCreateDto req) {
+        ReviewDto createdDto = reviewsService.create(movieId, userId, req);
         return ResponseEntity.ok(createdDto);
     }
 
