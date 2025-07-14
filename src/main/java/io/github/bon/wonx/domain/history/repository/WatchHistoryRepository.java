@@ -3,7 +3,8 @@ package io.github.bon.wonx.domain.history.repository;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import io.github.bon.wonx.domain.history.entity.WatchHistory;
 
