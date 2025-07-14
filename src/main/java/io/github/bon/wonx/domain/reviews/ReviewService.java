@@ -31,14 +31,20 @@ public class ReviewService {
 
     // 댓글 생성
     @Transactional
-    public ReviewDto create(UUID movieId, ReviewDto dto) {
+    public ReviewDto create(UUID movieId, UUID userId, ReviewCreateDto req) {
         Movie movie = movieRepository.findById(movieId) 
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 생성 실패: " + "대상 영화가 없습니다."));
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 생성 실패: " + "대상 유저가 없습니다."));
-        Review review = Review.createReview(dto, movie, user);
+        Review review = new Review(
+            user, 
+            movie, 
+            req.getRating(),
+            req.getContent(),
+            Boolean.TRUE.equals(req.getIsAnonymous())
+        );
         Review created = reviewRepository.save(review);
         return ReviewDto.from(created);
     }
