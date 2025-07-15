@@ -1,4 +1,4 @@
-package io.github.bon.wonx.domain.history.entity;
+package io.github.bon.wonx.domain.history;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
