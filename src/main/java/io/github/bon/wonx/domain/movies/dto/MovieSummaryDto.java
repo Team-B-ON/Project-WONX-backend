@@ -3,6 +3,9 @@ package io.github.bon.wonx.domain.movies.dto;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.entity.MoviePerson;
 import lombok.AllArgsConstructor;
@@ -19,23 +22,27 @@ public class MovieSummaryDto {
     private boolean isBookmarked;
     private boolean isLiked;
     private String ageRating;
-    private Integer duration;
+    private Integer durationMinutes;
+
+    @JsonProperty("genres")
     private List<String> genres;
 
-    public static MovieSummaryDto from(MoviePerson rel) {
-        Movie movie = rel.getMovie();
-        
+    public static MovieSummaryDto from(Movie movie, boolean isBookmarked, boolean isLiked) {
         return new MovieSummaryDto(
             movie.getId(),
             movie.getTitle(),
             movie.getPosterUrl(),
-            false,
-            false,
+            isBookmarked,
+            isLiked,
             movie.getAgeRating(),
             movie.getDurationMinutes(),
             movie.getGenres().stream()
-                    .map(genre -> genre.getName())
+                    .map(Genre::getName)
                     .toList()
         );
+    }
+
+    public static MovieSummaryDto from(MoviePerson rel) {
+        return from(rel.getMovie(), false, false);
     }
 }
