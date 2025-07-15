@@ -3,7 +3,7 @@ package io.github.bon.wonx.domain.history.admin;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import io.github.bon.wonx.domain.history.entity.WatchHistory;
+import io.github.bon.wonx.domain.history.WatchHistory;
 
 public record AdminWatchHistoryDto(
     UUID id,

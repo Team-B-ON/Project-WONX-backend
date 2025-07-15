@@ -2,8 +2,8 @@ package io.github.bon.wonx.domain.movies.repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +13,8 @@ import io.github.bon.wonx.domain.movies.entity.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 
 public interface MovieRepository extends JpaRepository<Movie, UUID> {
+
+    // 장르 객체 기반으로 조회
     List<Movie> findByGenresIn(List<Genre> genres);
 
     // 박스오피스 1위
@@ -21,11 +23,17 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     // 개봉 예정작
     List<Movie> findByReleaseDateBetweenOrderByReleaseDateAsc(LocalDate start, LocalDate end);
 
-    // 조회수 내림차순 정렬
+    // 조회수 내림차순 정렬 (페이징 포함)
     List<Movie> findAllByOrderByViewCountDesc(Pageable pageable);
 
     // 박스오피스 순위 기준으로 상위 10개 영화 조회
-    List<Movie> findTop10ByBoxOfficeRankIsNotNullOrderByBoxOfficeRankAsc();
+    List<Movie> findTop10ByOrderByBoxOfficeRankAsc();
+
+    // 조회수 내림차순 상위 10개 영화 조회
+    List<Movie> findTop10ByOrderByViewCountDesc();
+
+    // 장르 이름 기반 조회수 내림차순 정렬
+    List<Movie> findTop10ByGenres_NameInOrderByViewCountDesc(List<String> genreNames);
 
     // 추천 장르 중 이미 좋아요한 영화 제외
     List<Movie> findDistinctByGenresInAndIdNotIn(List<Genre> genres, List<UUID> excludeIds);

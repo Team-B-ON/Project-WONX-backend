@@ -1,25 +1,27 @@
 package io.github.bon.wonx.domain.profile.service;
 
-import io.github.bon.wonx.domain.follow.repository.FollowRepository;
-import io.github.bon.wonx.domain.history.repository.WatchHistoryRepository;
-import io.github.bon.wonx.domain.movies.dto.MovieDto;
-import io.github.bon.wonx.domain.movies.repository.BookmarkRepository;
-import io.github.bon.wonx.domain.movies.repository.LikeRepository;
-import io.github.bon.wonx.domain.movies.repository.MovieRepository;
-import io.github.bon.wonx.domain.profile.dto.*;
-import io.github.bon.wonx.domain.reviews.ReviewRepository;
-import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
-import io.github.bon.wonx.domain.user.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import io.github.bon.wonx.domain.follow.repository.FollowRepository;
+import io.github.bon.wonx.domain.history.WatchHistoryRepository;
+import io.github.bon.wonx.domain.movies.dto.MovieDto;
+import io.github.bon.wonx.domain.movies.repository.BookmarkRepository;
+import io.github.bon.wonx.domain.movies.repository.LikeRepository;
+import io.github.bon.wonx.domain.movies.repository.MovieRepository;
+import io.github.bon.wonx.domain.profile.dto.ProfileUpdateRequest;
+import io.github.bon.wonx.domain.profile.dto.PublicProfileDto;
+import io.github.bon.wonx.domain.reviews.ReviewRepository;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
+import io.github.bon.wonx.domain.user.User;
+import io.github.bon.wonx.domain.user.UserRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
