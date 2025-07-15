@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.reviews.Review;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -56,11 +57,11 @@ public class Movie {
     @Column(name = "poster_url")
     private String posterUrl;
 
+    @Column(name = "main_img")
+    private String mainImg;
+
     @Column(name = "age_rating")
     private String ageRating;
-
-    @Column(name = "age_rating_reason")
-    private String ageRatingReason;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "required_plan", nullable = false)

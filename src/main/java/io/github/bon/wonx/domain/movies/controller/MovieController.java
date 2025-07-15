@@ -8,10 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.bon.wonx.domain.movies.dto.MovieDetailDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.entity.MovieLevel;
@@ -29,8 +31,11 @@ public class MovieController {
 
     // 영화 상세 정보 조회
     @GetMapping("/{id}")
-    public ResponseEntity<MovieDto> details(@PathVariable UUID id) {
-        MovieDto dto = movieService.details(id);
+    public ResponseEntity<MovieDetailDto> details(
+        @PathVariable UUID id,
+        @RequestAttribute(value = "userId", required = false) UUID userId
+    ) {
+        MovieDetailDto dto = movieService.details(id, userId);
         return ResponseEntity.ok(dto);
     }
 

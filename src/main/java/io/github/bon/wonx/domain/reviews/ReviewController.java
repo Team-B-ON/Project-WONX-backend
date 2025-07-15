@@ -52,7 +52,7 @@ public class ReviewController {
     @PatchMapping("/api/reviews/{reviewId}")
     public ResponseEntity<ReviewDto> update(
             @PathVariable UUID reviewId, 
-            @RequestAttribute("usrId") UUID userId,
+            @RequestAttribute("userId") UUID userId,
             @RequestBody @Valid ReviewUpdateDto req) {
         ReviewDto updatedDto = reviewsService.update(reviewId, userId, req);
         return ResponseEntity.ok(updatedDto);
