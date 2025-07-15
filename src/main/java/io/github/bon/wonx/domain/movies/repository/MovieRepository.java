@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import io.github.bon.wonx.domain.movies.entity.Genre;
+import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 
 public interface MovieRepository extends JpaRepository<Movie, UUID> {

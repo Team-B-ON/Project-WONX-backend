@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.home.dto.HotTalkDto;
 import io.github.bon.wonx.domain.home.dto.RecommendDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
-import io.github.bon.wonx.domain.movies.entity.Genre;
 import io.github.bon.wonx.domain.movies.entity.Like;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.LikeRepository;

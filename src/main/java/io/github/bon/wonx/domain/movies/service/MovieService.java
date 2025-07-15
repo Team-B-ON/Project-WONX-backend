@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
-import io.github.bon.wonx.domain.movies.entity.Genre;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
