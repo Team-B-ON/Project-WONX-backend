@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.bon.wonx.domain.history.entity.WatchHistory;
-import io.github.bon.wonx.domain.history.repository.WatchHistoryRepository;
+import io.github.bon.wonx.domain.history.WatchHistory;
+import io.github.bon.wonx.domain.history.WatchHistoryRepository;
 import lombok.RequiredArgsConstructor;
 
 @RestController
