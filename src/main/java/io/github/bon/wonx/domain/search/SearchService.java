@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import io.github.bon.wonx.domain.reviews.ReviewRepository;
 import io.github.bon.wonx.domain.search.dto.MovieSearchDto;
 import io.github.bon.wonx.domain.search.dto.ReviewSearchDto;
@@ -20,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SearchService {
 
-  private final MovieRepository movieRepository;
+  private final SearchRepository searchRepository;
   private final UserRepository userRepository;
   private final ReviewRepository reviewRepository;
 
   public SearchResult searchAll(String keyword) {
     // 1. 키워드를 포함한 영화 제목으로 영화 검색
-    List<MovieSearchDto> movies = movieRepository.findByTitleContainingIgnoreCase(keyword)
+    List<MovieSearchDto> movies = searchRepository.findByTitleContainingIgnoreCase(keyword)
         .stream()
         .map(MovieSearchDto::from)
         .toList();
@@ -54,7 +53,7 @@ public class SearchService {
   }
 
   // 6. 결과 없으면 유사 검색어 추천 포함하여 반환
-  List<String> allTitles = movieRepository.findAllTitles(); // 직접 구현 필요
+  List<String> allTitles = searchRepository.findAllTitles(); // 직접 구현 필요
   List<String> similarKeywords = getSimilarKeywords(keyword, allTitles);
 
   List<SuggestionDto> suggestions = similarKeywords.stream()

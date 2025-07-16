@@ -26,4 +26,15 @@ public interface WatchHistoryRepository extends JpaRepository<WatchHistory, UUID
     // 많이 본 영화 (movieId와 count만 반환)
     @Query("SELECT h.movie.id, COUNT(h) as cnt FROM WatchHistory h GROUP BY h.movie.id ORDER BY cnt DESC")
     List<Object[]> findTopWatchedMovies();  // [0]: movieId, [1]: count
+
+    @Query("""
+    SELECT g.name, COUNT(g.name) as cnt
+    FROM WatchHistory h
+    JOIN h.movie m
+    JOIN m.genres g
+    WHERE h.user.id = :userId
+    GROUP BY g.name
+    ORDER BY cnt DESC
+    """)
+    List<Object[]> findTopGenresByUserId(UUID userId);
 }
