@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.github.bon.wonx.domain.reviews.Review;
 import lombok.AllArgsConstructor;
@@ -14,14 +15,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewDto {
+    @JsonProperty("reviewId")
     private UUID id;
+
     private UUID userId;
     private String userNickname;
     private UUID movieId;
     private Integer rating;
     private String content;
     private Boolean isAnonymous;
-    private Boolean isDeleted = false;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
     private Boolean isMine;
@@ -45,7 +48,6 @@ public class ReviewDto {
             review.getRating(),
             review.getContent(),
             review.getIsAnonymous(),
-            review.getIsDeleted(),
             review.getCreatedAt(),
             isMine
         );
