@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import io.github.bon.wonx.domain.movies.entity.Genre;
+import io.github.bon.wonx.domain.genres.Genre;
 
 public interface GenreRepository extends JpaRepository<Genre, UUID> {
 
