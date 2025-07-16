@@ -1,11 +1,9 @@
-package io.github.bon.wonx.domain.movies.repository;
+package io.github.bon.wonx.domain.genres;
 
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import io.github.bon.wonx.domain.genres.Genre;
 
 public interface GenreRepository extends JpaRepository<Genre, UUID> {
 
