@@ -1,6 +1,5 @@
 package io.github.bon.wonx.domain.reviews;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
