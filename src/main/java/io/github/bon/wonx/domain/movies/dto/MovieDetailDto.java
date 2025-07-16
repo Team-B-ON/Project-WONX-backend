@@ -3,7 +3,7 @@ package io.github.bon.wonx.domain.movies.dto;
 import java.util.List;
 import java.util.UUID;
 
-import io.github.bon.wonx.domain.genres.GenreDto;
+import io.github.bon.wonx.domain.genres.dto.GenreDto;
 import io.github.bon.wonx.domain.people.dto.PersonDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

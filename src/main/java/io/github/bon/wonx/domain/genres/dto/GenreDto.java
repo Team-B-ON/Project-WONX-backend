@@ -1,4 +1,4 @@
-package io.github.bon.wonx.domain.genres;
+package io.github.bon.wonx.domain.genres.dto;
 
 import java.util.UUID;
 
