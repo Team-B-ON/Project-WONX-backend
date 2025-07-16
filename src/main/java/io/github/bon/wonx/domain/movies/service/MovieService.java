@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import io.github.bon.wonx.domain.genres.Genre;
-import io.github.bon.wonx.domain.genres.GenreDto;
+import io.github.bon.wonx.domain.genres.dto.GenreDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDetailDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
