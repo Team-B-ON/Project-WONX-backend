@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.bon.wonx.domain.genres.Genre;
-
 import io.github.bon.wonx.domain.history.WatchHistory;
 import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.history.WatchHistoryRepository;
@@ -19,10 +17,6 @@ import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
 import io.github.bon.wonx.domain.home.dto.HotTalkDto;
 import io.github.bon.wonx.domain.home.dto.RecommendDto;
-
-import io.github.bon.wonx.domain.movies.dto.MovieDto;
-import io.github.bon.wonx.domain.movies.entity.Like;
-
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import io.github.bon.wonx.domain.reviews.ReviewRepository;
