@@ -47,4 +47,7 @@ public interface MovieRepository extends JpaRepository<Movie, UUID> {
     // 연관 검색어 추천용 전체 영화 제목 가져오기
     @Query("SELECT m.title FROM Movie m")
     List<String> findAllTitles();
+
+    @Query(value = "SELECT * FROM videos ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<Movie> findRandomMovie();
 }

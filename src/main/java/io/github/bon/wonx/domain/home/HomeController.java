@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.history.WatchHistoryDto;
-import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
-import io.github.bon.wonx.domain.home.dto.HotMovieDto;
-import io.github.bon.wonx.domain.home.dto.RecommendDto;
+import io.github.bon.wonx.domain.movies.dto.MovieSummaryDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserRepository;
@@ -27,28 +25,10 @@ public class HomeController {
     private final UserRepository userRepository;
 
     @GetMapping("/banner")
-    public ResponseEntity<?> getMainBanner() {
-        return ResponseEntity.ok(homeService.getBannerMovie());
-    }
-
-    @GetMapping("/upcoming")
-    public ResponseEntity<List<?>> getUpcomingMovies() {
-        return ResponseEntity.ok(homeService.getUpcomingMovies());
-    }
-
-    @GetMapping("/hot-movies")
-    public ResponseEntity<List<HotMovieDto>> getHotMovies() {
-        return ResponseEntity.ok(homeService.getHotMovies());
-    }
-
-    @GetMapping("/popular-reviews") // 기존 hot-talks에서 변경
-    public ResponseEntity<List<ReviewDto>> getPopularReviews() {
-        return ResponseEntity.ok(homeService.getPopularReviews());
-    }
-
-    @GetMapping("/box-office")
-    public ResponseEntity<List<BoxOfficeDto>> getBoxOfficeMovies() {
-        return ResponseEntity.ok(homeService.getBoxOfficeMovies());
+    public ResponseEntity<MovieSummaryDto> getMainBanner(HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+        User user = userRepository.findById(userId).orElseThrow();
+        return ResponseEntity.ok(homeService.getBannerMovie(user));
     }
 
     @GetMapping("/recent")
@@ -58,15 +38,18 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getRecentWatchHistory(user));
     }
 
-    @GetMapping("/continue")
-    public ResponseEntity<List<WatchHistoryDto>> getContinueWatching(HttpServletRequest request) {
-        UUID userId = (UUID) request.getAttribute("userId");
-        User user = userRepository.findById(userId).orElseThrow();
-        return ResponseEntity.ok(homeService.getContinueWatching(user));
+    @GetMapping("/hot-movies")
+    public ResponseEntity<List<MovieSummaryDto>> getHotMovies() {
+        return ResponseEntity.ok(homeService.getHotMovies());
+    }
+
+    @GetMapping("/popular-reviews")
+    public ResponseEntity<List<ReviewDto>> getPopularReviews() {
+        return ResponseEntity.ok(homeService.getPopularReviews());
     }
 
     @GetMapping("/recommend")
-    public ResponseEntity<List<RecommendDto>> getRecommendations(HttpServletRequest request) {
+    public ResponseEntity<List<MovieSummaryDto>> getRecommendations(HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
         User user = userRepository.findById(userId).orElseThrow();
         return ResponseEntity.ok(homeService.getRecommendations(user));

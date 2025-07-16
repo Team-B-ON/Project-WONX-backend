@@ -1,6 +1,5 @@
 package io.github.bon.wonx.domain.home;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.github.bon.wonx.domain.history.WatchHistory;
 import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.history.WatchHistoryRepository;
-import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
-import io.github.bon.wonx.domain.home.dto.HotMovieDto;
-import io.github.bon.wonx.domain.home.dto.RecommendDto;
+import io.github.bon.wonx.domain.movies.dto.MovieSummaryDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import io.github.bon.wonx.domain.reviews.Review;
@@ -37,51 +34,6 @@ public class HomeService {
     private final UserPreferencesRepository userPreferencesRepository;
     private final ReviewRepository reviewRepository;
 
-    public List<BoxOfficeDto> getBoxOfficeMovies() {
-        List<Movie> movies = movieRepository.findTop10ByOrderByBoxOfficeRankAsc();
-        return movies.stream()
-                .map(m -> new BoxOfficeDto(
-                        m.getId(),
-                        m.getTitle(),
-                        m.getPosterUrl(),
-                        m.getBoxOfficeRank() != null ? m.getBoxOfficeRank().longValue() : 0L
-                ))
-                .collect(Collectors.toList());
-    }
-
-    public List<HotMovieDto> getHotMovies() {
-        List<Movie> movies = movieRepository.findTop10ByOrderByViewCountDesc();
-        return movies.stream()
-                .map(HotMovieDto::from)
-                .collect(Collectors.toList());
-    }
-
-    public List<ReviewDto> getPopularReviews() {
-        // 1. 최근 24시간 내 리뷰가 많이 달린 영화 ID 조회
-        List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(3);
-
-        // 2. 없다면 전체 리뷰 수 기준 인기 영화로 대체
-        if (videoIds.isEmpty()) {
-            videoIds = reviewRepository.findMostReviewedVideoIds(3);
-        }
-
-        // 3. 영화 ID들에 해당하는 리뷰 중 최신 순 정렬 → 각 영화당 1개만 추출
-        List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
-
-        // 최신 리뷰들 중에서 videoId 별로 대표 1개씩만 추출
-        return reviews.stream()
-                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt())) // 최신 순
-                .collect(Collectors.toMap(
-                        r -> r.getMovie().getId(), // key: movieId
-                        ReviewDto::from,           // value
-                        (r1, r2) -> r1             // 중복 시 첫 번째 값 유지
-                ))
-                .values()
-                .stream()
-                .limit(3) // 혹시 3개 넘는 경우
-                .collect(Collectors.toList());
-    }
-
     public List<WatchHistoryDto> getRecentWatchHistory(User user) {
         List<WatchHistory> histories = watchHistoryRepository.findRecentHistoriesByUser(user.getId());
         return histories.stream()
@@ -89,14 +41,29 @@ public class HomeService {
                 .collect(Collectors.toList());
     }
 
-    public List<WatchHistoryDto> getContinueWatching(User user) {
-        List<WatchHistory> histories = watchHistoryRepository.findInProgressHistoriesByUser(user.getId());
-        return histories.stream()
-                .map(WatchHistoryDto::from)
+    public MovieSummaryDto getBannerMovie(User user) {
+        List<UUID> inProgressIds = watchHistoryRepository.findInProgressVideoIdsByUser(user.getId());
+
+        if (!inProgressIds.isEmpty()) {
+            UUID videoId = inProgressIds.get(0);
+            return movieRepository.findById(videoId)
+                    .map(m -> MovieSummaryDto.from(m, false, false))
+                    .orElseThrow(() -> new IllegalStateException("이어보기 영화가 존재하지 않습니다."));
+        }
+
+        return movieRepository.findRandomMovie()
+                .map(m -> MovieSummaryDto.from(m, false, false))
+                .orElseThrow(() -> new IllegalStateException("랜덤 영화 조회 실패"));
+    }
+
+    public List<MovieSummaryDto> getHotMovies() {
+        List<Movie> movies = movieRepository.findTop10ByOrderByViewCountDesc();
+        return movies.stream()
+                .map(m -> MovieSummaryDto.from(m, false, false))
                 .collect(Collectors.toList());
     }
 
-    public List<RecommendDto> getRecommendations(User user) {
+    public List<MovieSummaryDto> getRecommendations(User user) {
         Optional<UserPreferences> preferencesOpt = userPreferencesRepository.findByUserId(user.getId());
 
         List<Movie> movies;
@@ -109,27 +76,28 @@ public class HomeService {
         }
 
         return movies.stream()
-                .map(m -> new RecommendDto(
-                        m.getId(),
-                        m.getTitle(),
-                        m.getPosterUrl(),
-                        m.getBoxOfficeRank() != null ? m.getBoxOfficeRank() : 0
-                ))
+                .map(m -> MovieSummaryDto.from(m, false, false))
                 .collect(Collectors.toList());
     }
 
-    public HotMovieDto getBannerMovie() {
-        return movieRepository.findTop1ByOrderByBoxOfficeRankAsc()
-                .map(HotMovieDto::from)
-                .orElseThrow(() -> new IllegalStateException("No banner movie found"));
-    }
+    public List<ReviewDto> getPopularReviews() {
+        List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(3);
+        if (videoIds.isEmpty()) {
+            videoIds = reviewRepository.findMostReviewedVideoIds(3);
+        }
 
-    public List<HotMovieDto> getUpcomingMovies() {
-        LocalDate now = LocalDate.now();
-        LocalDate threeWeeksLater = now.plusWeeks(3);
-        return movieRepository.findByReleaseDateBetweenOrderByReleaseDateAsc(now, threeWeeksLater)
+        List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
+
+        return reviews.stream()
+                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+                .collect(Collectors.toMap(
+                        r -> r.getMovie().getId(),
+                        ReviewDto::from,
+                        (r1, r2) -> r1
+                ))
+                .values()
                 .stream()
-                .map(HotMovieDto::from)
+                .limit(3)
                 .collect(Collectors.toList());
     }
 
