@@ -1,6 +1,5 @@
 package io.github.bon.wonx.domain.reviews;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -15,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.reviews.dto.ReviewCreateDto;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDeleteResponse;
 import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewListResponse;
 import io.github.bon.wonx.domain.reviews.dto.ReviewUpdateDto;
+import io.github.bon.wonx.domain.reviews.dto.ReviewUpdateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -50,18 +51,18 @@ public class ReviewController {
 
     // 리뷰 수정
     @PatchMapping("/api/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> update(
+    public ResponseEntity<ReviewUpdateResponse> update(
             @PathVariable UUID reviewId, 
             @RequestAttribute("userId") UUID userId,
             @RequestBody @Valid ReviewUpdateDto req) {
         ReviewDto updatedDto = reviewsService.update(reviewId, userId, req);
-        return ResponseEntity.ok(updatedDto);
+        return ResponseEntity.ok(ReviewUpdateResponse.from(updatedDto));
     }
 
     // 리뷰 삭제
     @DeleteMapping("/api/reviews/{reviewId}")
-    public ResponseEntity<ReviewDto> delete(@PathVariable("reviewId") UUID reviewId) {
-        ReviewDto deletedDto = reviewsService.delete(reviewId);
-        return ResponseEntity.ok(deletedDto);
+    public ResponseEntity<ReviewDeleteResponse> delete(@PathVariable("reviewId") UUID reviewId) {
+        reviewsService.delete(reviewId);
+        return ResponseEntity.ok(ReviewDeleteResponse.success());
     }
 }

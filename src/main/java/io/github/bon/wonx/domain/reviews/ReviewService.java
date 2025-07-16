@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -121,18 +120,17 @@ public class ReviewService {
         Review target = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 수정 실패: " + "대상 댓글이 없습니다."));
-        target.patch(req.getContent());
+        target.patch(req.getRating(), req.getContent());
         Review updated = reviewRepository.save(target);
         return ReviewDto.from(updated, currentUserId);
     }
 
     // 댓글 삭제
     @Transactional
-    public ReviewDto delete(UUID id) {
+    public void delete(UUID id) {
         Review target = reviewRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "댓글 삭제 실패: " + "대상 댓글이 없습니다."));
         reviewRepository.delete(target);
-        return ReviewDto.from(target);
     }
 }
