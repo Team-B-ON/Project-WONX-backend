@@ -92,7 +92,9 @@ public class Review {
         );
     }
 
-    public void patch(String content) {
+    public void patch(Integer rating, String content) {
+        if (rating != null)
+            this.rating = rating;
         if (content != null && !content.isBlank())
             this.content = content;
     }
