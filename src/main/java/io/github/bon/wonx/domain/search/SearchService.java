@@ -37,7 +37,7 @@ public class SearchService {
         .toList();
 
     // 3. 해당 영화에 대한 리뷰만 조회
-    List<ReviewSearchDto> reviews = reviewRepository.findByMovieIdIn(movieIds)
+    List<ReviewSearchDto> reviews = reviewRepository.findByMovieIds(movieIds)
         .stream()
         .map(ReviewSearchDto::from)
         .toList();

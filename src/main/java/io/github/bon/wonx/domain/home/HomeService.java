@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -15,11 +16,12 @@ import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.history.WatchHistoryRepository;
 import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
-import io.github.bon.wonx.domain.home.dto.HotTalkDto;
 import io.github.bon.wonx.domain.home.dto.RecommendDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
+import io.github.bon.wonx.domain.reviews.Review;
 import io.github.bon.wonx.domain.reviews.ReviewRepository;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserPreferences;
 import io.github.bon.wonx.domain.user.UserPreferencesRepository;
@@ -32,7 +34,6 @@ public class HomeService {
 
     private final MovieRepository movieRepository;
     private final WatchHistoryRepository watchHistoryRepository;
-    private final HotTalkRepository hotTalkRepository;
     private final UserPreferencesRepository userPreferencesRepository;
     private final ReviewRepository reviewRepository;
 
@@ -55,16 +56,29 @@ public class HomeService {
                 .collect(Collectors.toList());
     }
 
-    public List<HotTalkDto> getHotTalks() {
-        return hotTalkRepository.findTop3ByOrderByViewCountDescCreatedAtDesc().stream()
-                .map(talk -> new HotTalkDto(
-                        talk.getMovie().getId(),
-                        talk.getMovie().getTitle(),
-                        talk.getMovie().getPosterUrl(),
-                        talk.getContent(),
-                        talk.getViewCount(),
-                        talk.getCreatedAt()
+    public List<ReviewDto> getPopularReviews() {
+        // 1. 최근 24시간 내 리뷰가 많이 달린 영화 ID 조회
+        List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(3);
+
+        // 2. 없다면 전체 리뷰 수 기준 인기 영화로 대체
+        if (videoIds.isEmpty()) {
+            videoIds = reviewRepository.findMostReviewedVideoIds(3);
+        }
+
+        // 3. 영화 ID들에 해당하는 리뷰 중 최신 순 정렬 → 각 영화당 1개만 추출
+        List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
+
+        // 최신 리뷰들 중에서 videoId 별로 대표 1개씩만 추출
+        return reviews.stream()
+                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt())) // 최신 순
+                .collect(Collectors.toMap(
+                        r -> r.getMovie().getId(), // key: movieId
+                        ReviewDto::from,           // value
+                        (r1, r2) -> r1             // 중복 시 첫 번째 값 유지
                 ))
+                .values()
+                .stream()
+                .limit(3) // 혹시 3개 넘는 경우
                 .collect(Collectors.toList());
     }
 

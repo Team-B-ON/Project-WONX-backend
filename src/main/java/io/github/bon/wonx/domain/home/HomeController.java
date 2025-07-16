@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.home.dto.BoxOfficeDto;
 import io.github.bon.wonx.domain.home.dto.HotMovieDto;
-import io.github.bon.wonx.domain.home.dto.HotTalkDto;
 import io.github.bon.wonx.domain.home.dto.RecommendDto;
+import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
 import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,9 +41,9 @@ public class HomeController {
         return ResponseEntity.ok(homeService.getHotMovies());
     }
 
-    @GetMapping("/hot-talks")
-    public ResponseEntity<List<HotTalkDto>> getHotTalks() {
-        return ResponseEntity.ok(homeService.getHotTalks());
+    @GetMapping("/popular-reviews") // 기존 hot-talks에서 변경
+    public ResponseEntity<List<ReviewDto>> getPopularReviews() {
+        return ResponseEntity.ok(homeService.getPopularReviews());
     }
 
     @GetMapping("/box-office")
