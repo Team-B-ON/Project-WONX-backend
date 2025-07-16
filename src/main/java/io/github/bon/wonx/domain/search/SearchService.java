@@ -1,5 +1,10 @@
 package io.github.bon.wonx.domain.search;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
 import io.github.bon.wonx.domain.reviews.ReviewRepository;
 import io.github.bon.wonx.domain.search.dto.MovieSearchDto;
@@ -10,10 +15,6 @@ import io.github.bon.wonx.domain.search.dto.UserSearchDto;
 import io.github.bon.wonx.domain.search.util.HangulUtils;
 import io.github.bon.wonx.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -47,30 +48,21 @@ public class SearchService {
         .map(UserSearchDto::from)
         .toList();
 
-    // 5. 결과 있으면 그대로 반환
-    if (!movies.isEmpty() || !users.isEmpty()) {
-      return SearchResult.builder()
-          .movies(movies)
-          .users(users)
-          .reviews(reviews)
-          .build();
-    }
-
-    // 6. 결과 없으면 유사 검색어 추천
-    List<String> allTitles = movieRepository.findAllTitles(); // 직접 구현 필요
-    List<String> similarKeywords = getSimilarKeywords(keyword, allTitles);
-
-    List<SuggestionDto> suggestions = similarKeywords.stream()
-        .map(k -> SuggestionDto.builder().keyword(k).build())
-        .toList();
-
-    return SearchResult.builder()
-        .movies(movies)
-        .users(users)
-        .reviews(reviews)
-        .suggestions(suggestions)
-        .build();
+  // 5. 결과 있으면 그대로 반환 (팩토리 메서드 활용)
+  if (!movies.isEmpty() || !users.isEmpty()) {
+    return SearchResult.of(movies, users, reviews);
   }
+
+  // 6. 결과 없으면 유사 검색어 추천 포함하여 반환
+  List<String> allTitles = movieRepository.findAllTitles(); // 직접 구현 필요
+  List<String> similarKeywords = getSimilarKeywords(keyword, allTitles);
+
+  List<SuggestionDto> suggestions = similarKeywords.stream()
+      .map(k -> SuggestionDto.builder().keyword(k).build())
+      .toList();
+
+  return SearchResult.of(movies, users, reviews, suggestions);
+}
 
   private List<String> getSimilarKeywords(String keyword, List<String> candidates) {
     String disKeyword = HangulUtils.disassemble(keyword.toLowerCase());

@@ -12,17 +12,23 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ReviewSearchDto {
 
-  private UUID id;
-  private String content;
-  private UUID movieId;
-  private UUID userId;
+    private UUID id;
+    private String content;
 
-  public static ReviewSearchDto from(Review review) {
-    return ReviewSearchDto.builder()
-        .id(review.getId())
-        .content(review.getContent() != null ? review.getContent() : "")
-        .movieId(review.getMovie().getId())
-        .userId(review.getUser().getId())
-        .build();
-  }
+    private String movieTitle;
+    private String posterUrl;
+
+    private String author;
+    private Integer rating;
+
+    public static ReviewSearchDto from(Review review) {
+        return ReviewSearchDto.builder()
+            .id(review.getId())
+            .content(review.getContent() != null ? review.getContent() : "")
+            .movieTitle(review.getMovie().getTitle())
+            .posterUrl(review.getMovie().getPosterUrl())
+            .author(review.getIsAnonymous() ? "익명" : review.getUser().getNickname())
+            .rating(review.getRating())
+            .build();
+    }
 }
