@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.github.bon.wonx.domain.genres.Genre;
+import io.github.bon.wonx.domain.genres.dto.GenreDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.entity.MoviePerson;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ public class MovieSummaryDto {
     private Integer durationMinutes;
 
     @JsonProperty("genres")
-    private List<String> genres;
+    private List<GenreDto> genres;
 
     public static MovieSummaryDto from(Movie movie, boolean isBookmarked, boolean isLiked) {
         return new MovieSummaryDto(
@@ -37,7 +37,7 @@ public class MovieSummaryDto {
             movie.getAgeRating(),
             movie.getDurationMinutes(),
             movie.getGenres().stream()
-                    .map(Genre::getName)
+                    .map(GenreDto::from)
                     .toList()
         );
     }
