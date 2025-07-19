@@ -63,13 +63,6 @@ public class ProfilePageService {
                 .build();
     }
 
-    public List<MovieDto> getRecentVideos(UUID userId) {
-        List<UUID> ids = historyRepo.findRecentVideoIdsByUser(userId);
-        return movieRepo.findAllById(ids).stream()
-                .map(MovieDto::from)
-                .collect(Collectors.toList());
-    }
-
     public List<MovieDto> getBookmarkedMovies(UUID userId) {
         List<UUID> movieIds = bookmarkRepo.findBookmarkedMovieIdsByUser(userId);
         return movieRepo.findAllById(movieIds).stream()
@@ -88,13 +81,6 @@ public class ProfilePageService {
         List<UUID> ids = reviewRepo.findReviewedMovieIdsByUser(userId);
         return reviewRepo.findAllById(ids).stream()
                 .map(ReviewDto::from)
-                .collect(Collectors.toList());
-    }
-
-    public List<MovieDto> getInProgressVideos(UUID userId) {
-        List<UUID> ids = historyRepo.findInProgressVideoIdsByUser(userId);
-        return movieRepo.findAllById(ids).stream()
-                .map(MovieDto::from)
                 .collect(Collectors.toList());
     }
 
