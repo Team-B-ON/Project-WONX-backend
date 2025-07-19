@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.github.bon.wonx.domain.follow.repository.FollowRepository;
+import io.github.bon.wonx.domain.history.WatchHistory;
+import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.history.WatchHistoryRepository;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.movies.repository.BookmarkRepository;
@@ -61,6 +63,13 @@ public class ProfilePageService {
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .build();
+    }
+
+    public List<WatchHistoryDto> getMypageWatchHistory(User user) {
+    List<WatchHistory> histories = historyRepo.findRecentHistoriesByUser(user.getId());
+    return histories.stream()
+            .map(WatchHistoryDto::from)
+            .collect(Collectors.toList());
     }
 
     public List<MovieDto> getBookmarkedMovies(UUID userId) {

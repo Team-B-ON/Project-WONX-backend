@@ -96,7 +96,7 @@ public class MyPageController {
 
     // 1. 최근 시청한 콘텐츠 (HomeService 사용)
     @GetMapping("/recent")
-    public ResponseEntity<List<WatchHistoryDto>> getRecentWatchHistory(HttpServletRequest request) {
+    public ResponseEntity<List<WatchHistoryDto>> getMypageWatchHistory(HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
         User user = userRepository.findById(userId).orElseThrow();
         return ResponseEntity.ok(homeService.getRecentWatchHistory(user));
