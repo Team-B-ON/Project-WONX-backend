@@ -12,6 +12,7 @@ import io.github.bon.wonx.domain.genres.Genre;
 import io.github.bon.wonx.domain.genres.dto.GenreDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDetailDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
+import io.github.bon.wonx.domain.movies.dto.RelatedMovieResponse;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.entity.MoviePerson;
 import io.github.bon.wonx.domain.movies.repository.BookmarkRepository;
@@ -83,18 +84,26 @@ public class MovieService {
     }
 
     // 함께 시청된 콘텐츠 조회
-    public List<MovieDto> relatedContents(UUID id) {
+    public RelatedMovieResponse relatedContents(UUID id, int offset, int limit) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie == null || movie.getGenres().isEmpty())
-            return List.of();
+            return new RelatedMovieResponse(0, offset, limit, List.of());
 
         List<Genre> genres = movie.getGenres();
-        List<Movie> related = movieRepository.findByGenresIn(genres);
-
-        return related.stream()
+        List<Movie> related = movieRepository.findByGenresIn(genres).stream()
                 .filter(m -> !m.getId().equals(id))
+                .toList();
+        
+        int total = related.size();
+
+        // 페이징 처리
+        List<MovieDto> pagedResults = related.stream()
+                .skip(offset)
+                .limit(limit)
                 .map(MovieDto::from)
                 .toList();
+                
+        return new RelatedMovieResponse(total, offset, limit, pagedResults);
     }
 
     // Movie 엔티티 직접 조회

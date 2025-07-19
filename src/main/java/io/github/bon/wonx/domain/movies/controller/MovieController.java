@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.movies.dto.MovieDetailDto;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
+import io.github.bon.wonx.domain.movies.dto.RelatedMovieResponse;
 import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.entity.MovieLevel;
 import io.github.bon.wonx.domain.movies.service.MovieService;
@@ -41,9 +42,13 @@ public class MovieController {
 
     // 함께 시청된 콘텐츠 조회
     @GetMapping("/{id}/related")
-    public ResponseEntity<List<MovieDto>> relatedContents(@PathVariable UUID id) {
-        List<MovieDto> dtos = movieService.relatedContents(id);
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<RelatedMovieResponse> relatedContents(
+        @PathVariable UUID id,
+        @RequestParam(defaultValue = "0") int offset,
+        @RequestParam(defaultValue = "6") int limit
+    ) {
+        RelatedMovieResponse response = movieService.relatedContents(id, offset, limit);
+        return ResponseEntity.ok(response);
     }
 
     // 요금제 기반 Presigned URL 반환
