@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,34 +74,38 @@ public class HomeService {
                 .toList();
     }
 
-public List<ReviewDto> getPopularReviews() {
-    // 1. 최근 24시간 내에 리뷰가 달린 영화 ID 최대 8개 조회
-    List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(8);
+    public List<ReviewDto> getPopularReviews() {
+        // 1. 최근 24시간 내에 리뷰가 달린 영화 ID 최대 8개 조회 (JPQL + Pageable)
+        List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(PageRequest.of(0, 8));
 
-    // 2. 없으면 → 리뷰 많은 영화 기준으로 대체
-    if (videoIds.isEmpty()) {
-        videoIds = reviewRepository.findMostReviewedVideoIds(8);
+        // 2. 없으면 → 리뷰 많은 영화 기준으로 대체
+        if (videoIds.isEmpty()) {
+            videoIds = reviewRepository.findMostReviewedVideoIds(PageRequest.of(0, 8));
+        }
+
+        // 3. 해당 영화들의 리뷰 가져오기
+        List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
+
+        System.out.println("🎯 가져온 리뷰 수: " + reviews.size());
+        for (Review r : reviews) {
+            System.out.println("✔ 리뷰 ID: " + r.getId() +
+                    ", 영화 ID: " + (r.getMovie() != null ? r.getMovie().getId() : "null") +
+                    ", 유저 ID: " + (r.getUser() != null ? r.getUser().getId() : "null"));
+        }
+
+        // 4. 영화별로 리뷰 그룹핑 후 최신 리뷰 하나씩만 추출
+        return reviews.stream()
+            .filter(r -> r.getMovie() != null && r.getUser() != null)
+            .collect(Collectors.groupingBy(r -> r.getMovie().getId()))
+            .values().stream()
+            .map(rs -> rs.stream()
+                        .max(Comparator.comparing(Review::getCreatedAt))
+                        .orElse(null)) // 예외 방지
+            .filter(r -> r != null) // null 방어
+            .map(ReviewDto::from)
+            .limit(4)
+            .toList();
     }
-
-    // 3. 해당 영화들의 리뷰 가져오기
-    List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
-
-    // 4. 영화별로 리뷰 그룹핑 후 최신 리뷰 하나씩만 추출
-    List<Review> filtered = reviews.stream()
-        .filter(r -> r.getMovie() != null && r.getUser() != null) // null 방어
-        .collect(Collectors.groupingBy(r -> r.getMovie().getId()))
-        .values().stream()
-        .map(rs -> rs.stream()
-                    .max(Comparator.comparing(Review::getCreatedAt))
-                    .orElseThrow()) // 최신 리뷰 선택
-        .toList();
-
-    // ✅ 1개 이상만 있어도 최대 4개까지 추출
-    return filtered.stream()
-        .map(ReviewDto::from)
-        .limit(4)
-        .toList();
-}
 
     public List<MovieSummaryDto> getRecommendations(User user) {
         List<Object[]> topGenresRaw = watchHistoryRepository.findTopGenresByUserId(user.getId());
