@@ -12,7 +12,12 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
     @Query(value = "SELECT * FROM reviews WHERE video_id = :id", nativeQuery = true)
     List<Review> findByMovieId(@Param("id") UUID id);
 
-    @Query("SELECT r FROM Review r WHERE r.movie.id IN :movieIds")
+    @Query("""
+    SELECT r FROM Review r 
+    JOIN FETCH r.movie 
+    JOIN FETCH r.user 
+    WHERE r.movie.id IN :movieIds
+    """)
     List<Review> findByMovieIds(@Param("movieIds") List<UUID> movieIds);
 
     // 최근 N시간 내 리뷰 많은 영화 ID (예: 최근 24시간)

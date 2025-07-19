@@ -86,15 +86,19 @@ public List<ReviewDto> getPopularReviews() {
     List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
 
     // 4. 영화별로 리뷰 그룹핑 후 최신 리뷰 하나씩만 추출
-    return reviews.stream()
+    List<Review> filtered = reviews.stream()
         .filter(r -> r.getMovie() != null && r.getUser() != null) // null 방어
         .collect(Collectors.groupingBy(r -> r.getMovie().getId()))
         .values().stream()
         .map(rs -> rs.stream()
-                     .max(Comparator.comparing(Review::getCreatedAt))
-                     .orElseThrow()) // 최신 리뷰 선택
+                    .max(Comparator.comparing(Review::getCreatedAt))
+                    .orElseThrow()) // 최신 리뷰 선택
+        .toList();
+
+    // ✅ 1개 이상만 있어도 최대 4개까지 추출
+    return filtered.stream()
         .map(ReviewDto::from)
-        .limit(4) // 프론트 기준 슬라이더 4개
+        .limit(4)
         .toList();
 }
 
