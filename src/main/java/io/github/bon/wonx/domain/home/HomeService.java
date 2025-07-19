@@ -1,5 +1,6 @@
 package io.github.bon.wonx.domain.home;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -72,26 +73,30 @@ public class HomeService {
                 .toList();
     }
 
-    public List<ReviewDto> getPopularReviews() {
-        List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(3);
-        if (videoIds.isEmpty()) {
-            videoIds = reviewRepository.findMostReviewedVideoIds(3);
-        }
+public List<ReviewDto> getPopularReviews() {
+    // 1. 최근 24시간 내에 리뷰가 달린 영화 ID 최대 8개 조회
+    List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(8);
 
-        List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
-
-        return reviews.stream()
-                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
-                .collect(Collectors.toMap(
-                        r -> r.getMovie().getId(),
-                        ReviewDto::from,
-                        (r1, r2) -> r1
-                ))
-                .values()
-                .stream()
-                .limit(3)
-                .collect(Collectors.toList());
+    // 2. 없으면 → 리뷰 많은 영화 기준으로 대체
+    if (videoIds.isEmpty()) {
+        videoIds = reviewRepository.findMostReviewedVideoIds(8);
     }
+
+    // 3. 해당 영화들의 리뷰 가져오기
+    List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
+
+    // 4. 영화별로 리뷰 그룹핑 후 최신 리뷰 하나씩만 추출
+    return reviews.stream()
+        .filter(r -> r.getMovie() != null && r.getUser() != null) // null 방어
+        .collect(Collectors.groupingBy(r -> r.getMovie().getId()))
+        .values().stream()
+        .map(rs -> rs.stream()
+                     .max(Comparator.comparing(Review::getCreatedAt))
+                     .orElseThrow()) // 최신 리뷰 선택
+        .map(ReviewDto::from)
+        .limit(4) // 프론트 기준 슬라이더 4개
+        .toList();
+}
 
     public List<MovieSummaryDto> getRecommendations(User user) {
         List<Object[]> topGenresRaw = watchHistoryRepository.findTopGenresByUserId(user.getId());
