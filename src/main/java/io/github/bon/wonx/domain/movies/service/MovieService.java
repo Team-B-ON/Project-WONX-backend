@@ -84,10 +84,11 @@ public class MovieService {
     }
 
     // 함께 시청된 콘텐츠 조회
-    public RelatedMovieResponse relatedContents(UUID id, int offset, int limit) {
+    public RelatedMovieResponse relatedContents(UUID id, int offset, int limit, UUID userId) {
         Movie movie = movieRepository.findById(id).orElse(null);
-        if (movie == null || movie.getGenres().isEmpty())
+        if (movie == null || movie.getGenres().isEmpty()) {
             return new RelatedMovieResponse(0, offset, limit, List.of());
+        }
 
         List<Genre> genres = movie.getGenres();
         List<Movie> related = movieRepository.findByGenresIn(genres).stream()
@@ -96,14 +97,27 @@ public class MovieService {
         
         int total = related.size();
 
-        // 페이징 처리
-        List<MovieDto> pagedResults = related.stream()
+        // 페이징 적용
+        List<Movie> paged = related.stream()
                 .skip(offset)
                 .limit(limit)
-                .map(MovieDto::from)
                 .toList();
+        
+        List<UUID> pagedIds = paged.stream().map(Movie::getId).toList();
+
+        List<UUID> bookmarkedIds = userId != null
+            ? bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(userId, pagedIds)
+            : List.of();
+        
+        List<MovieDto> resultDtos = paged.stream()
+            .map(m -> {
+                MovieDto dto = MovieDto.from(m);
+                dto.setIsBookmarked(bookmarkedIds.contains(m.getId()));
+                return dto;
+            })
+            .toList();
                 
-        return new RelatedMovieResponse(total, offset, limit, pagedResults);
+        return new RelatedMovieResponse(total, offset, limit, resultDtos);
     }
 
     // Movie 엔티티 직접 조회

@@ -16,4 +16,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, UUID> {
 
     @Query("SELECT b.movie.id FROM Bookmark b WHERE b.user.id = :userId")
     List<UUID> findBookmarkedMovieIdsByUser(@Param("userId") UUID userId);
+
+    @Query("SELECT b.movie.id FROM Bookmark b WHERE b.user.id = :userId AND b.movie.id IN :movieIds")
+    List<UUID> findBookmarkedMovieIdsByUserAndMovieIds(@Param("userId") UUID userId, @Param("movieIds") List<UUID> movieIds);
 }

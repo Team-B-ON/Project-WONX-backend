@@ -45,9 +45,10 @@ public class MovieController {
     public ResponseEntity<RelatedMovieResponse> relatedContents(
         @PathVariable UUID id,
         @RequestParam(defaultValue = "0") int offset,
-        @RequestParam(defaultValue = "6") int limit
+        @RequestParam(defaultValue = "6") int limit,
+        @RequestAttribute(value = "userId", required = false) UUID userId
     ) {
-        RelatedMovieResponse response = movieService.relatedContents(id, offset, limit);
+        RelatedMovieResponse response = movieService.relatedContents(id, offset, limit, userId);
         return ResponseEntity.ok(response);
     }
 
