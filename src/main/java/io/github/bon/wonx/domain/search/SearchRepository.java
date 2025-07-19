@@ -1,19 +1,24 @@
 package io.github.bon.wonx.domain.search;
 
 import java.util.List;
-import java.util.UUID;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import io.github.bon.wonx.domain.movies.entity.Movie;
+import io.github.bon.wonx.domain.reviews.Review;
 
-public interface SearchRepository extends JpaRepository<Movie, UUID> {
+public interface SearchRepository {
+    List<Movie> searchMoviesByTitle(String keyword, String sort);
+    List<Movie> searchMoviesByGenre(String genreName, String sort);
+    List<Movie> searchMoviesByPerson(String personName, String sort);
+    List<Review> searchReviewsByContent(String keyword);
 
-    // 제목에 키워드 포함된 영화 검색 (대소문자 무시)
-    List<Movie> findByTitleContainingIgnoreCase(String keyword);
+    // 초성 대응용 NativeQuery (정규식)
+    List<Movie> searchByTitleRegex(String regex);
+    List<Movie> searchByGenreRegex(String regex);
+    List<Movie> searchByPersonRegex(String regex);
+    List<Review> searchReviewByRegex(String regex);
 
-    // 모든 영화 제목 가져오기 (유사어 추천용)
-    @Query("SELECT m.title FROM Movie m")
-    List<String> findAllTitles();
+    List<String> autocompletePersonNames(String keyword);
+    List<String> autocompleteMovieTitles(String keyword);
+    List<String> autocompleteGenreNames(String keyword);
+    List<String> autocompleteReviewPhrases(String keyword);
 }
