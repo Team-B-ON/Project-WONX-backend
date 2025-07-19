@@ -20,4 +20,8 @@ public interface LikeRepository extends JpaRepository<Like, UUID> {
 
     @Query("SELECT l.movie.id FROM Like l WHERE l.user.id = :userId")
     List<UUID> findLikedMovieIdsByUser(@Param("userId") UUID userId);
+
+    @Query("SELECT l.movie.id FROM Like l WHERE l.user.id = :userId AND l.movie.id IN :movieIds")
+    List<UUID> findLikedMovieIdsByUserAndMovieIds(@Param("userId") UUID userId, @Param("movieIds") List<UUID> movieIds);
+
 }

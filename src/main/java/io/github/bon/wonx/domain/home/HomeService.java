@@ -12,6 +12,8 @@ import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.history.WatchHistoryRepository;
 import io.github.bon.wonx.domain.movies.dto.MovieSummaryDto;
 import io.github.bon.wonx.domain.movies.entity.Movie;
+import io.github.bon.wonx.domain.movies.repository.BookmarkRepository;
+import io.github.bon.wonx.domain.movies.repository.LikeRepository;
 import io.github.bon.wonx.domain.reviews.Review;
 import io.github.bon.wonx.domain.reviews.ReviewRepository;
 import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
@@ -26,6 +28,8 @@ public class HomeService {
     private final HomeRepository homeRepository;
     private final WatchHistoryRepository watchHistoryRepository;
     private final ReviewRepository reviewRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final LikeRepository likeRepository;
 
     public List<WatchHistoryDto> getRecentWatchHistory(User user) {
         List<WatchHistory> histories = watchHistoryRepository.findRecentHistoriesByUser(user.getId());
@@ -49,11 +53,23 @@ public class HomeService {
                 .orElseThrow(() -> new IllegalStateException("랜덤 영화 조회 실패"));
     }
 
-    public List<MovieSummaryDto> getHotMovies() {
+    public List<MovieSummaryDto> getHotMovies(UUID userId) {
         List<Movie> movies = homeRepository.findTop10ByOrderByViewCountDesc();
+
+        if (movies.isEmpty()) return List.of();
+
+        List<UUID> movieIds = movies.stream().map(Movie::getId).toList();
+
+        List<UUID> bookmarkedIds = bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(userId, movieIds);
+        List<UUID> likedIds = likeRepository.findLikedMovieIdsByUserAndMovieIds(userId, movieIds);
+
         return movies.stream()
-                .map(m -> MovieSummaryDto.from(m, false, false))
-                .collect(Collectors.toList());
+                .map(m -> MovieSummaryDto.from(
+                    m, 
+                    bookmarkedIds.contains(m.getId()), 
+                    likedIds.contains(m.getId())
+                ))
+                .toList();
     }
 
     public List<ReviewDto> getPopularReviews() {
@@ -81,18 +97,29 @@ public class HomeService {
         List<Object[]> topGenresRaw = watchHistoryRepository.findTopGenresByUserId(user.getId());
 
         if (topGenresRaw.isEmpty()) {
-            return getHotMovies();  // fallback
+            return getHotMovies(user.getId());  // fallback
         }
 
         List<String> topGenres = topGenresRaw.stream()
             .map(row -> (String) row[0])
-            .collect(Collectors.toList());
+            .toList();
 
         List<Movie> movies = homeRepository.findTop10ByGenres_NameInOrderByViewCountDesc(topGenres);
 
+        if (movies.isEmpty()) return List.of();
+
+        List<UUID> movieIds = movies.stream().map(Movie::getId).toList();
+
+        List<UUID> bookmarkedIds = bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
+        List<UUID> likedIds = likeRepository.findLikedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
+
         return movies.stream()
-            .map(m -> MovieSummaryDto.from(m, false, false))
-            .collect(Collectors.toList());
+            .map(m -> MovieSummaryDto.from(
+                m, 
+                bookmarkedIds.contains(m.getId()), 
+                likedIds.contains(m.getId())
+            ))
+            .toList();
     }
 
     public Long getTotalReviewCount() {

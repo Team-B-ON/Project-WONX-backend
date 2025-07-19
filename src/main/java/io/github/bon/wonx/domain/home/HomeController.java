@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,8 +40,10 @@ public class HomeController {
     }
 
     @GetMapping("/hot-movies")
-    public ResponseEntity<List<MovieSummaryDto>> getHotMovies() {
-        return ResponseEntity.ok(homeService.getHotMovies());
+    public ResponseEntity<List<MovieSummaryDto>> getHotMovies(
+        @RequestAttribute("userId") UUID userId
+    ) {
+        return ResponseEntity.ok(homeService.getHotMovies(userId));
     }
 
     @GetMapping("/popular-reviews")
