@@ -14,6 +14,7 @@ import io.github.bon.wonx.domain.history.WatchHistory;
 import io.github.bon.wonx.domain.history.WatchHistoryDto;
 import io.github.bon.wonx.domain.history.WatchHistoryRepository;
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
+import io.github.bon.wonx.domain.movies.entity.Movie;
 import io.github.bon.wonx.domain.movies.repository.BookmarkRepository;
 import io.github.bon.wonx.domain.movies.repository.LikeRepository;
 import io.github.bon.wonx.domain.movies.repository.MovieRepository;
@@ -65,6 +66,22 @@ public class ProfilePageService {
                 .build();
     }
 
+    private List<MovieDto> mapWithUserLikesAndBookmarks(List<Movie> movies, UUID userId) {
+    List<UUID> ids = movies.stream().map(Movie::getId).toList();
+
+    List<UUID> bookmarkedIds = bookmarkRepo.findBookmarkedMovieIdsByUserAndMovieIds(userId, ids);
+    List<UUID> likedIds = likeRepo.findLikedMovieIdsByUserAndMovieIds(userId, ids);
+
+    return movies.stream()
+            .map(m -> {
+                MovieDto dto = MovieDto.from(m);
+                dto.setIsBookmarked(bookmarkedIds.contains(m.getId()));
+                dto.setIsLiked(likedIds.contains(m.getId()));
+                return dto;
+            })
+            .toList();
+    }
+
     public List<WatchHistoryDto> getMypageWatchHistory(User user) {
     List<WatchHistory> histories = historyRepo.findRecentHistoriesByUser(user.getId());
     return histories.stream()
@@ -74,16 +91,14 @@ public class ProfilePageService {
 
     public List<MovieDto> getBookmarkedMovies(UUID userId) {
         List<UUID> movieIds = bookmarkRepo.findBookmarkedMovieIdsByUser(userId);
-        return movieRepo.findAllById(movieIds).stream()
-                .map(MovieDto::from)
-                .collect(Collectors.toList());
+        List<Movie> movies = movieRepo.findAllById(movieIds);
+        return mapWithUserLikesAndBookmarks(movies, userId);
     }
 
     public List<MovieDto> getLikedMovies(UUID userId) {
         List<UUID> ids = likeRepo.findLikedMovieIdsByUser(userId);
-        return movieRepo.findAllById(ids).stream()
-                .map(MovieDto::from)
-                .toList();
+        List<Movie> movies = movieRepo.findAllById(ids);
+        return mapWithUserLikesAndBookmarks(movies, userId);
     }
 
     public List<ReviewDto> getMyReviews(UUID userId) {

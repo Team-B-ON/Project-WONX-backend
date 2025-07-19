@@ -49,4 +49,19 @@ public class MovieDto {
             false
         );
     }
+
+    public static MovieDto from(Movie movie, boolean isBookmarked, boolean isLiked) {
+        return new MovieDto(
+            movie.getId(),
+            movie.getTitle(),
+            movie.getPosterUrl(),
+            movie.getDescription(),
+            movie.getRating(),
+            movie.getDurationMinutes(),
+            movie.getReleaseDate(),
+            movie.getAgeRating(),
+            isBookmarked,
+            isLiked
+        );
+    }
 }
