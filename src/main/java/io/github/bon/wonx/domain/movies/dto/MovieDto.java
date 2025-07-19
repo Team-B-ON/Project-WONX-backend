@@ -18,6 +18,7 @@ import lombok.ToString;
 public class MovieDto {
     private UUID id;
     private String title;
+    private String posterUrl;
     private String description;
     private Float rating;
     private Integer durationMinutes;
@@ -38,6 +39,7 @@ public class MovieDto {
         return new MovieDto(
             movie.getId(),
             movie.getTitle(),
+            movie.getPosterUrl(),
             movie.getDescription(),
             movie.getRating(),
             movie.getDurationMinutes(),
