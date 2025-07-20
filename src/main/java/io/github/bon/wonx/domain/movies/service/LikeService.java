@@ -41,7 +41,9 @@ public class LikeService {
     // 좋아요 삭제
     @Transactional
     public LikeDto delete(UUID userId, UUID movieId) {
-        likeRepository.deleteByUserIdAndMovieId(userId, movieId);
+        if (likeRepository.findByUserIdAndMovieId(userId, movieId).isPresent()) {
+            likeRepository.deleteByUserIdAndMovieId(userId, movieId);
+        }
         return LikeDto.notLiked(userId, movieId);        
     }    
 }

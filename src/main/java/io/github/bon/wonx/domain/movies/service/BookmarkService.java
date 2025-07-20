@@ -41,7 +41,9 @@ public class BookmarkService {
     // 북마크 삭제
     @Transactional
     public BookmarkDto delete(UUID userId, UUID movieId) {
-        bookmarkRepository.deleteByUserIdAndMovieId(userId, movieId);
+        if (bookmarkRepository.findByUserIdAndMovieId(userId, movieId).isPresent()) {
+            bookmarkRepository.deleteByUserIdAndMovieId(userId, movieId);
+        }
         return BookmarkDto.notBookmarked(userId, movieId);        
     }
 }
