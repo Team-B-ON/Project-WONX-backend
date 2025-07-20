@@ -22,10 +22,10 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, UUID> {
 
     @Modifying
     @Transactional
-    @Query("""
-        DELETE FROM Bookmark b
-        WHERE b.user.id = :userId AND b.movie.id = :movieId
-    """)
+    @Query(
+    value = "DELETE FROM bookmarks WHERE user_id = :userId AND video_id = :movieId",
+    nativeQuery = true
+    )
     void deleteByUserIdAndMovieId(@Param("userId") UUID userId, @Param("movieId") UUID movieId);
 
     @Query("""

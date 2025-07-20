@@ -22,10 +22,10 @@ public interface LikeRepository extends JpaRepository<Like, UUID> {
 
     @Modifying
     @Transactional
-    @Query("""
-        DELETE FROM Like l
-        WHERE l.user.id = :userId AND l.movie.id = :movieId
-    """)
+    @Query(
+    value = "DELETE FROM likes WHERE user_id = :userId AND video_id = :movieId",
+    nativeQuery = true
+    )
     void deleteByUserIdAndMovieId(@Param("userId") UUID userId, @Param("movieId") UUID movieId);
 
     List<Like> findByUserId(UUID userId);
