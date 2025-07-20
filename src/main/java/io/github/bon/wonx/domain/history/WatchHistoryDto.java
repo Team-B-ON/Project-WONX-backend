@@ -13,12 +13,12 @@ public class WatchHistoryDto {
   private int watchedSeconds;
   private boolean isCompleted;
 
-  public static WatchHistoryDto from(WatchHistory entity) {
-    return new WatchHistoryDto(
-        MovieSummaryDto.from(entity.getMovie(), false, false),
-        entity.getLastPosition() != null ? entity.getLastPosition() : 0,
-        entity.getWatchedSeconds() != null ? entity.getWatchedSeconds() : 0,
-        Boolean.TRUE.equals(entity.getIsCompleted())
-    );
+  public static WatchHistoryDto from(WatchHistory entity, boolean isBookmarked, boolean isLiked) {
+      return new WatchHistoryDto(
+          MovieSummaryDto.from(entity.getMovie(), isBookmarked, isLiked),
+          entity.getLastPosition() != null ? entity.getLastPosition() : 0,
+          entity.getWatchedSeconds() != null ? entity.getWatchedSeconds() : 0,
+          Boolean.TRUE.equals(entity.getIsCompleted())
+      );
   }
 }

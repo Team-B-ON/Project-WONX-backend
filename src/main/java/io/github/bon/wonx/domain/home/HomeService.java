@@ -35,9 +35,20 @@ public class HomeService {
 
     public List<WatchHistoryDto> getRecentWatchHistory(User user) {
         List<WatchHistory> histories = watchHistoryRepository.findRecentHistoriesByUser(user.getId());
+        List<UUID> movieIds = histories.stream()
+                .map(h -> h.getMovie().getId())
+                .toList();
+
+        List<UUID> bookmarkedIds = bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
+        List<UUID> likedIds = likeRepository.findLikedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
+
         return histories.stream()
-                .map(WatchHistoryDto::from)
-                .collect(Collectors.toList());
+                .map(h -> WatchHistoryDto.from(
+                    h,
+                    bookmarkedIds.contains(h.getMovie().getId()),
+                    likedIds.contains(h.getMovie().getId())
+                ))
+                .toList();
     }
 
     public MovieSummaryDto getBannerMovie(User user) {
@@ -65,51 +76,26 @@ public class HomeService {
 
     public List<MovieSummaryDto> getHotMovies(UUID userId) {
         List<Movie> movies = homeRepository.findTop10ByOrderByViewCountDesc();
-
-        if (movies.isEmpty()) return List.of();
-
-        List<UUID> movieIds = movies.stream().map(Movie::getId).toList();
-
-        List<UUID> bookmarkedIds = bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(userId, movieIds);
-        List<UUID> likedIds = likeRepository.findLikedMovieIdsByUserAndMovieIds(userId, movieIds);
-
-        return movies.stream()
-                .map(m -> MovieSummaryDto.from(
-                    m, 
-                    bookmarkedIds.contains(m.getId()), 
-                    likedIds.contains(m.getId())
-                ))
-                .toList();
+        return mapWithUserLikesAndBookmarks(movies, userId);
     }
 
     public List<ReviewDto> getPopularReviews() {
-        // 1. 최근 24시간 내에 리뷰가 달린 영화 ID 최대 8개 조회 (JPQL + Pageable)
         List<UUID> videoIds = reviewRepository.findPopularVideoIdsInLast24Hours(PageRequest.of(0, 8));
 
-        // 2. 없으면 → 리뷰 많은 영화 기준으로 대체
         if (videoIds.isEmpty()) {
             videoIds = reviewRepository.findMostReviewedVideoIds(PageRequest.of(0, 8));
         }
 
-        // 3. 해당 영화들의 리뷰 가져오기
         List<Review> reviews = reviewRepository.findByMovieIds(videoIds);
 
-        System.out.println("🎯 가져온 리뷰 수: " + reviews.size());
-        for (Review r : reviews) {
-            System.out.println("✔ 리뷰 ID: " + r.getId() +
-                    ", 영화 ID: " + (r.getMovie() != null ? r.getMovie().getId() : "null") +
-                    ", 유저 ID: " + (r.getUser() != null ? r.getUser().getId() : "null"));
-        }
-
-        // 4. 영화별로 리뷰 그룹핑 후 최신 리뷰 하나씩만 추출
         return reviews.stream()
             .filter(r -> r.getMovie() != null && r.getUser() != null)
             .collect(Collectors.groupingBy(r -> r.getMovie().getId()))
             .values().stream()
             .map(rs -> rs.stream()
                         .max(Comparator.comparing(Review::getCreatedAt))
-                        .orElse(null)) // 예외 방지
-            .filter(r -> r != null) // null 방어
+                        .orElse(null))
+            .filter(r -> r != null)
             .map(ReviewDto::from)
             .limit(4)
             .toList();
@@ -119,7 +105,7 @@ public class HomeService {
         List<Object[]> topGenresRaw = watchHistoryRepository.findTopGenresByUserId(user.getId());
 
         if (topGenresRaw.isEmpty()) {
-            return getHotMovies(user.getId());  // fallback
+            return getHotMovies(user.getId());
         }
 
         List<String> topGenres = topGenresRaw.stream()
@@ -127,24 +113,25 @@ public class HomeService {
             .toList();
 
         List<Movie> movies = homeRepository.findTop10ByGenres_NameInOrderByViewCountDesc(topGenres);
-
-        if (movies.isEmpty()) return List.of();
-
-        List<UUID> movieIds = movies.stream().map(Movie::getId).toList();
-
-        List<UUID> bookmarkedIds = bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
-        List<UUID> likedIds = likeRepository.findLikedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
-
-        return movies.stream()
-            .map(m -> MovieSummaryDto.from(
-                m, 
-                bookmarkedIds.contains(m.getId()), 
-                likedIds.contains(m.getId())
-            ))
-            .toList();
+        return mapWithUserLikesAndBookmarks(movies, user.getId());
     }
 
     public Long getTotalReviewCount() {
         return reviewRepository.count();
+    }
+
+    // ✅ 공통 처리 메서드: 북마크/좋아요 상태 반영
+    private List<MovieSummaryDto> mapWithUserLikesAndBookmarks(List<Movie> movies, UUID userId) {
+        List<UUID> ids = movies.stream().map(Movie::getId).toList();
+        List<UUID> bookmarkedIds = bookmarkRepository.findBookmarkedMovieIdsByUserAndMovieIds(userId, ids);
+        List<UUID> likedIds = likeRepository.findLikedMovieIdsByUserAndMovieIds(userId, ids);
+
+        return movies.stream()
+            .map(m -> MovieSummaryDto.from(
+                m,
+                bookmarkedIds.contains(m.getId()),
+                likedIds.contains(m.getId())
+            ))
+            .toList();
     }
 }

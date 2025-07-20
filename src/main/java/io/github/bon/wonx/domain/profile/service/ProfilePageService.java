@@ -83,10 +83,21 @@ public class ProfilePageService {
     }
 
     public List<WatchHistoryDto> getMypageWatchHistory(User user) {
-    List<WatchHistory> histories = historyRepo.findRecentHistoriesByUser(user.getId());
-    return histories.stream()
-            .map(WatchHistoryDto::from)
-            .collect(Collectors.toList());
+        List<WatchHistory> histories = historyRepo.findRecentHistoriesByUser(user.getId());
+        List<UUID> movieIds = histories.stream()
+                .map(h -> h.getMovie().getId())
+                .toList();
+
+        List<UUID> bookmarkedIds = bookmarkRepo.findBookmarkedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
+        List<UUID> likedIds = likeRepo.findLikedMovieIdsByUserAndMovieIds(user.getId(), movieIds);
+
+        return histories.stream()
+                .map(h -> WatchHistoryDto.from(
+                    h,
+                    bookmarkedIds.contains(h.getMovie().getId()),
+                    likedIds.contains(h.getMovie().getId())
+                ))
+                .toList();
     }
 
     public List<MovieDto> getBookmarkedMovies(UUID userId) {

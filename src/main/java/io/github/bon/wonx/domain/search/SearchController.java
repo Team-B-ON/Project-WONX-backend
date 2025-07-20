@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.github.bon.wonx.domain.movies.dto.MovieDto;
 import io.github.bon.wonx.domain.reviews.dto.ReviewDto;
-import io.github.bon.wonx.domain.user.User;
 import io.github.bon.wonx.domain.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -27,25 +26,31 @@ public class SearchController {
     @GetMapping("/movies")
     public ResponseEntity<List<MovieDto>> searchMovies(
         @RequestParam String query,
-        @RequestParam(defaultValue = "relevance") String sort
+        @RequestParam(defaultValue = "relevance") String sort,
+        HttpServletRequest request
     ) {
-        return ResponseEntity.ok(searchService.searchMoviesByTitle(query, sort));
+        UUID userId = extractUserId(request);
+        return ResponseEntity.ok(searchService.searchMoviesByTitle(query, sort, userId));
     }
 
     @GetMapping("/genres")
     public ResponseEntity<List<MovieDto>> searchByGenre(
         @RequestParam String query,
-        @RequestParam(defaultValue = "relevance") String sort
+        @RequestParam(defaultValue = "relevance") String sort,
+        HttpServletRequest request
     ) {
-        return ResponseEntity.ok(searchService.searchMoviesByGenre(query, sort));
+        UUID userId = extractUserId(request);
+        return ResponseEntity.ok(searchService.searchMoviesByGenre(query, sort, userId));
     }
 
     @GetMapping("/people")
     public ResponseEntity<List<MovieDto>> searchByPerson(
         @RequestParam String query,
-        @RequestParam(defaultValue = "relevance") String sort
+        @RequestParam(defaultValue = "relevance") String sort,
+        HttpServletRequest request
     ) {
-        return ResponseEntity.ok(searchService.searchMoviesByPerson(query, sort));
+        UUID userId = extractUserId(request);
+        return ResponseEntity.ok(searchService.searchMoviesByPerson(query, sort, userId));
     }
 
     @GetMapping("/reviews")
@@ -53,9 +58,8 @@ public class SearchController {
         @RequestParam String query,
         HttpServletRequest request
     ) {
-        UUID userId = (UUID) request.getAttribute("userId");
-        User user = userRepository.findById(userId).orElseThrow();
-        return ResponseEntity.ok(searchService.searchReviews(query, user.getId()));
+        UUID userId = extractUserId(request);
+        return ResponseEntity.ok(searchService.searchReviews(query, userId));
     }
 
     @GetMapping("/autocomplete/movies")
@@ -76,5 +80,13 @@ public class SearchController {
     @GetMapping("/autocomplete/reviews")
     public ResponseEntity<List<String>> autocompleteReviews(@RequestParam String query) {
         return ResponseEntity.ok(searchService.autocompleteReviews(query));
+    }
+
+    // 🔒 공통 유저 ID 추출 메서드
+    private UUID extractUserId(HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"))
+            .getId();
     }
 }
