@@ -11,12 +11,28 @@ import org.springframework.data.repository.query.Param;
 import io.github.bon.wonx.domain.movies.entity.Bookmark;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, UUID> {
-    Optional<Bookmark> findByUserIdAndMovieId(UUID userId, UUID movieId);
-    void deleteByUserIdAndMovieId(UUID userId, UUID movieId);
 
-    @Query("SELECT b.movie.id FROM Bookmark b WHERE b.user.id = :userId")
+    @Query("""
+        SELECT b FROM Bookmark b
+        WHERE b.user.id = :userId AND b.movie.id = :movieId
+    """)
+    Optional<Bookmark> findByUserIdAndMovieId(@Param("userId") UUID userId, @Param("movieId") UUID movieId);
+
+    @Query("""
+        DELETE FROM Bookmark b
+        WHERE b.user.id = :userId AND b.movie.id = :movieId
+    """)
+    void deleteByUserIdAndMovieId(@Param("userId") UUID userId, @Param("movieId") UUID movieId);
+
+    @Query("""
+        SELECT b.movie.id FROM Bookmark b
+        WHERE b.user.id = :userId
+    """)
     List<UUID> findBookmarkedMovieIdsByUser(@Param("userId") UUID userId);
 
-    @Query("SELECT b.movie.id FROM Bookmark b WHERE b.user.id = :userId AND b.movie.id IN :movieIds")
+    @Query("""
+        SELECT b.movie.id FROM Bookmark b
+        WHERE b.user.id = :userId AND b.movie.id IN :movieIds
+    """)
     List<UUID> findBookmarkedMovieIdsByUserAndMovieIds(@Param("userId") UUID userId, @Param("movieIds") List<UUID> movieIds);
 }
