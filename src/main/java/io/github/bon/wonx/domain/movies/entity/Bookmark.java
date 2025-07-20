@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "bookmarks", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "movie_id"})
+    @UniqueConstraint(columnNames = {"user_id", "video_id"})
 })
 public class Bookmark {
     @Id
@@ -37,7 +37,7 @@ public class Bookmark {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false)
+    @JoinColumn(name = "video_id", nullable = false)
     private Movie movie;
 
     @Column(name = "created_at", nullable = false, updatable = false)

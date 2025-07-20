@@ -157,8 +157,8 @@ public class SearchRepositoryImpl implements SearchRepository {
     public List<Movie> searchByPersonRegex(String regex) {
         Query query = em.createNativeQuery("""
             SELECT DISTINCT m.* FROM videos m
-            JOIN movie_person mp ON m.id = mp.movie_id
-            JOIN person p ON mp.person_id = p.id
+            JOIN video_person vp ON m.id = vp.video_id
+            JOIN people p ON vp.person_id = p.id
             WHERE p.name REGEXP :regex
         """, Movie.class);
         query.setParameter("regex", regex);

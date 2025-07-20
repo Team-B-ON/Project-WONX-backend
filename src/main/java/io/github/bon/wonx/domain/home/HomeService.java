@@ -46,12 +46,20 @@ public class HomeService {
         if (!inProgressIds.isEmpty()) {
             UUID videoId = inProgressIds.get(0);
             return homeRepository.findById(videoId)
-                    .map(m -> MovieSummaryDto.from(m, false, false))
+                    .map(m -> MovieSummaryDto.from(
+                        m,
+                        bookmarkRepository.findByUserIdAndMovieId(user.getId(), m.getId()).isPresent(),
+                        likeRepository.findByUserIdAndMovieId(user.getId(), m.getId()).isPresent()
+                    ))
                     .orElseThrow(() -> new IllegalStateException("이어보기 영화가 존재하지 않습니다."));
         }
 
         return homeRepository.findRandomMovie()
-                .map(m -> MovieSummaryDto.from(m, false, false))
+                .map(m -> MovieSummaryDto.from(
+                    m,
+                    bookmarkRepository.findByUserIdAndMovieId(user.getId(), m.getId()).isPresent(),
+                    likeRepository.findByUserIdAndMovieId(user.getId(), m.getId()).isPresent()
+                ))
                 .orElseThrow(() -> new IllegalStateException("랜덤 영화 조회 실패"));
     }
 

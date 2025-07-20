@@ -42,8 +42,17 @@ public class MovieService {
             .orElseThrow(() -> new EntityNotFoundException("Movie not found"));
         
         // 1. 좋아요/북마크 여부 확인
-        boolean isLiked = userId != null && likeRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
-        boolean isBookmarked = userId != null && bookmarkRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
+        boolean isLiked = false;
+        boolean isBookmarked = false;
+        if (userId != null) {
+            try {
+                isLiked = likeRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
+                isBookmarked = bookmarkRepository.findByUserIdAndMovieId(userId, movieId).isPresent();
+            } catch (Exception e) {
+                // 에러 로그만 남기고 기본값 유지
+                System.err.println("❌ 좋아요/북마크 상태 확인 중 오류: " + e.getMessage());
+            }
+        }
 
         // 2. 인물 정보 분류
         List<PersonDto> actors = new ArrayList<>();
