@@ -5,10 +5,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import io.github.bon.wonx.domain.movies.entity.Bookmark;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import io.github.bon.wonx.domain.movies.entity.Bookmark;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, UUID> {
     Optional<Bookmark> findByUserIdAndMovieId(UUID userId, UUID movieId);
