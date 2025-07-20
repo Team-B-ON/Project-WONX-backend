@@ -42,7 +42,7 @@ public class MovieSummaryDto {
         );
     }
 
-    public static MovieSummaryDto from(MoviePerson rel) {
-        return from(rel.getMovie(), false, false);
+    public static MovieSummaryDto from(MoviePerson rel, boolean isBookmarked, boolean isLiked) {
+        return from(rel.getMovie(), isBookmarked, isLiked);
     }
 }

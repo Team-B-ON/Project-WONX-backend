@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 public class PersonDto {
     private UUID id;
     private String name;
-    
-    public static PersonDto createPersonDto(Person person) {
+
+    public static PersonDto from(Person person) {
         return new PersonDto(
             person.getId(),
             person.getName()
