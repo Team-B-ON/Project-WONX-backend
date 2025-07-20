@@ -24,21 +24,24 @@ public class LikeService {
     // 좋아요 추가
     @Transactional
     public LikeDto create(UUID userId, UUID movieId) {
-        User user = userRepository.findById(userId).orElse(null);
-        Movie movie = movieRepository.findById(movieId).orElse(null);
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다: " + userId));
+        Movie movie = movieRepository.findById(movieId).
+            orElseThrow(() -> new IllegalArgumentException("영화를 찾을 수 없습니다: " + movieId));
         
-        Like like = new Like(user, movie);
-        Like created = likeRepository.save(like);
-        
-        return LikeDto.from(created);
+        return likeRepository.findByUserIdAndMovieId(userId, movieId)
+            .map(LikeDto::from)
+            .orElseGet(() -> {
+                Like like = new Like(user, movie);
+                Like created = likeRepository.save(like);
+                return LikeDto.from(created);
+            });
     }
     
     // 좋아요 삭제
     @Transactional
     public LikeDto delete(UUID userId, UUID movieId) {
-        Like like = likeRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
-        likeRepository.delete(like);
-
+        likeRepository.deleteByUserIdAndMovieId(userId, movieId);
         return LikeDto.notLiked(userId, movieId);        
     }    
 }

@@ -37,7 +37,7 @@ public class Bookmark {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "video_id", nullable = false)
+    @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 
     @Column(name = "created_at", nullable = false, updatable = false)

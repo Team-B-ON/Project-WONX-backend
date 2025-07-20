@@ -24,37 +24,24 @@ public class BookmarkService {
     // 북마크 추가
     @Transactional
     public BookmarkDto create(UUID userId, UUID movieId) {
-        System.out.println("BookmarkService 진입");
-        System.out.println("userId: " + userId);
-        System.out.println("movieId: " + movieId);
-
-        try {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다: " + userId));
         Movie movie = movieRepository.findById(movieId)
             .orElseThrow(() -> new IllegalArgumentException("영화를 찾을 수 없습니다: " + movieId));
         
-        Bookmark bookmark = new Bookmark(user, movie);
-        Bookmark created = bookmarkRepository.save(bookmark);
-        
-        System.out.println("북마크 생성 완료: " + created.getId());
-        return BookmarkDto.from(created);
-
-        } catch (Exception e) {
-        System.out.println("예외 발생: " + e.getMessage());
-        e.printStackTrace();
-        throw e;
-        }
+        return bookmarkRepository.findByUserIdAndMovieId(userId, movieId)
+            .map(BookmarkDto::from)
+            .orElseGet(() -> {
+                Bookmark bookmark = new Bookmark(user, movie);
+                Bookmark created = bookmarkRepository.save(bookmark);
+                return BookmarkDto.from(created);
+            });
     }
     
     // 북마크 삭제
     @Transactional
     public BookmarkDto delete(UUID userId, UUID movieId) {
-        Bookmark bookmark = bookmarkRepository.findByUserIdAndMovieId(userId, movieId).orElse(null);
-        if (bookmark != null) {
-            bookmarkRepository.delete(bookmark);
-        }
-
+        bookmarkRepository.deleteByUserIdAndMovieId(userId, movieId);
         return BookmarkDto.notBookmarked(userId, movieId);        
     }
 }
